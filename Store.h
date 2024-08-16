@@ -8,31 +8,30 @@
 #include <string>
 
 struct PurchaseRecord {
-    int clientId;
-    std::string clientName;
-    int productId;
-    std::string productName;
+    int clientId; // 고객 id
+    string clientName; // 고객 이름
+    int productId; // 상품 id
+    string productName; // 상품 이름
+    string categoryName; // 카테고리 이름
+    string purchaseTime; // 구매 시간
 };
+
 class Store
 {
 public:
     Store(ClientManager& cm, ProductManager& pm, CategoryManager& catm);
-    
-    //void addProduct(int productId, int stock);
-    void updateStock(int productId, int newStock);
-    //void setProductAvailability(int productId, bool available);
+   
+    void updateStock(int productId, int quantity);
     void sellProduct(int clientId, int productId);
     void displayPurchaseHistory() const;
     ~Store();
 
 private:
 
-    ClientManager& clientManager;
-    ProductManager& productManager;
-    CategoryManager& categoryManager;
-    //unordered_map<int, int> mStockMap; // 상품 id -> 재고
-    //unordered_map<int, bool> mAvailabilityMap; // 상품 id -> 판매여부
-    vector< PurchaseRecord> purchaseHistory; // 구매내역
+    ClientManager& mClientManager;
+    ProductManager& mProductManager;
+    CategoryManager& mCategoryManager;
+    vector<PurchaseRecord> mPurchaseHistoryVec; // 구매내역
 };
 
 

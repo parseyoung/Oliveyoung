@@ -28,7 +28,7 @@ private:
 	int makeId();
 	vector<string> parseCSV(std::istream& file, char delimiter);
 
-	map<int, Product*> mProductList;
+	map<int, Product*> mProductMap;
 	CategoryManager& mCategoryManager; 
 
 	

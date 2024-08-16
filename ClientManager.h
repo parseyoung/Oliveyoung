@@ -17,7 +17,7 @@ public:
 	Client* searchClient(int id);
 
 private:
-	map<int, Client*> clientList;
+	map<int, Client*> mClientMap; 
 	int makeId();
 	vector<string> parseCSV(istream& file, char delimiter);
 

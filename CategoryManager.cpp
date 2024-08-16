@@ -6,44 +6,42 @@
 #include <vector>
 
 using namespace std;
-
+// 생성자: 객체가 생성될 때 카테고리 정보를 파일에서 로드
 CategoryManager::CategoryManager()
 {
     loadCategoriesFromFile();
 }
-
+// 소멸자: 객체가 삭제될 때 카테고리 정보를 파일에 저장
 CategoryManager::~CategoryManager()
 {
     saveCategoriesToFile();
-    for (const auto& pair : mCategoryMap) {
-        delete pair.second;
+    for (const auto& category : mCategoryMap) {
+        delete category.second; // 카테고리 객체 메모리 해제
     }
 }
 
+// 카테고리를 추가하는 함수
 void CategoryManager::addCategory(const string& categoryName)
 {
-    if (mCategoryMap.find(categoryName) == mCategoryMap.end()) {
+    if (mCategoryMap.find(categoryName) == mCategoryMap.end()) { // 카테고리 존재하지 않으면,
         mCategoryMap[categoryName] = new Category(categoryName);
-        //cout << "Category added: " << categoryName << endl;
+        cout << "카테고리 추가 : " << categoryName << endl;
     }
     else {
-        //cout << "Category already exists: " << categoryName << endl;
+        cout << categoryName << " 카테고리는 이미 존재합니다." << endl;
     }
 }
-
+// 카테고리를 삭제하는 함수
 void CategoryManager::deleteCategory(const string& categoryName)
 {
     auto it = mCategoryMap.find(categoryName);
     if (it != mCategoryMap.end()) {
         delete it->second;
         mCategoryMap.erase(it);
-        cout << "Category " << categoryName << " deleted" << endl;
-    }
-    else {
-        cerr << "Category " << categoryName << " not found" << endl;
+        cout << "카테고리 : " << categoryName << " 삭제" << endl;
     }
 }
-
+// 카테고리 이름으로 카테고리 검색하여 반환하는 함수
 Category* CategoryManager::getCategory(const string& categoryName) const 
 {
     auto it = mCategoryMap.find(categoryName);
@@ -56,17 +54,17 @@ Category* CategoryManager::getCategory(const string& categoryName) const
 void CategoryManager::displayCategories() const 
 {
     if (mCategoryMap.empty()) {
-        cout << "No categories to display" << endl;
+        cout << "카테고리가 존재하지 않습니다" << endl;
         return;
     }
-    cout << "Category: ";  
+    cout << "카테고리: ";  
     bool first = true;
 
-    for (const auto& pair : mCategoryMap) {
+    for (const auto& category : mCategoryMap) {
         if (!first) {
             cout << ", ";  // 첫 번째 이후 카테고리 앞에 쉼표 추가
         }
-        cout << pair.first;
+        cout << category.first;
         first = false;
     }
     cout << endl;
