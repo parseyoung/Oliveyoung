@@ -14,11 +14,19 @@ using namespace std;
 
 StoreManager::StoreManager()
 {
-	vector<string> sellinf;
+	readFile();
+}
+StoreManager::~StoreManager()
+{
+
+}
+void StoreManager::readFile()
+{
 	ProductManager pm;
 	Store s;
 	map<int, Product*> productList = pm.getList();
 	vector<int> sellId = s.getSellList();
+	sellItems.clear();
 	for (const auto& v : productList)
 	{
 		if (find(sellId.begin(), sellId.end(), v.first) != sellId.end())
@@ -28,18 +36,101 @@ StoreManager::StoreManager()
 			sellinfo.push_back(to_string(v.second->getPrice()));
 			sellinfo.push_back(v.second->getCategory());
 			sellinfo.push_back(to_string(s.getInventory(v.first)));
-			sellItems[v.first] = sellinfo;
+			sellItems.insert({ v.first,sellinfo });
 		}
 	}
 }
-StoreManager::~StoreManager()
+void StoreManager::inputUserId()
 {
-
+	int userId;
+	ClientManager cm;
+	cout << "Enter Id >> ";
+	cin >> userId;
+	cin.ignore();
+	if (cm.isExist(userId))
+	{
+		sell();
+	}
+	else {
+		cout << "first visit custumer! please sign up" << endl;
+	}
 }
-
-void StoreManager::sell()
+//bool changeFlag()
+//{
+//	return true;
+//}
+void StoreManager::sell()//sell 에서 물건 안찾아짐//
 {
-
+	string sellName;
+	ProductManager pm;
+	Store s;
+	int sellPrice;
+	cout << "what do you want to buy?>> ";
+	getline(cin, sellName);
+	string isPay;
+	for (const auto& v : sellItems)
+	{
+		if (find(v.second.begin(), v.second.end(), sellName) != v.second.end())
+		{
+			sellPrice = pm.getList()[v.first]->getPrice();
+			cout << "Selected " << sellName << "cost : " << sellPrice << endl;
+			cout << "Pay Y/N>> ";
+			getline(cin, isPay);
+			if (isPay == "y" || isPay == "Y")
+			{
+				cout << sellPrice << "has been paid" << endl;
+				sellItems[v.first].at(3) = to_string(stoi(sellItems[v.first].at(3)) - 1);
+				s.updateInventory(v.first);
+			}
+			else
+			{
+				cout << "Pay is Canceled" << endl;
+				break;
+			}
+		}
+		else {
+			cout << "Can't find product" << endl;
+			break;
+		}
+	}
+}
+bool StoreManager::displayMenu()
+{
+	int quit = 0;
+	readFile();
+	while (quit != 1) {
+		int ch;
+		//cout << "\033[2J\033[1;1H";
+		cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "              Store Manager                  " << endl;
+		cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "  1. Display Sell List                       " << endl;
+		cout << "  2. Sell                                    " << endl;
+		cout << "  3. Show Record                             " << endl;
+		cout << "  4. Quit this Program                       " << endl;
+		cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << " What do you wanna do? ";
+		cin >> ch;
+		cin.ignore();
+		switch (ch) {
+		case 1: default:
+			displayInfo();
+			//cin.ignore();
+			//getchar();
+			break;
+		case 2:
+			displayInfo();
+			inputUserId();
+			break;
+		case 3:
+			displayInfo();
+			break;
+		case 4:
+			quit = 1;
+			break;
+		}
+	}
+	return true;
 }
 void StoreManager::displayInfo()
 {

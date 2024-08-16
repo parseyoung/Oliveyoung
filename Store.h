@@ -22,6 +22,7 @@ public:
 	void writeFile();
 	vector<int> getSellList();
 	int getInventory(int id);
+	void updateInventory(int id);
 	void addState();//add추가=> 제품 추가됬을 때 
 private:
 	map<int, vector<int>> stateProduct;

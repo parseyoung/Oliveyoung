@@ -147,7 +147,12 @@ void Store::updateStatet()//상태 고치기 재고와 판매여부 수정가능
 		break;
 	}
 }
-
+void Store::updateInventory(int id)
+{
+	int inventory = stateProduct[id][0];
+	stateProduct[id][0] = --inventory;
+	writeFile();
+}
 vector<int> Store::getSellList()
 {
 	readFile();
@@ -165,7 +170,7 @@ vector<int> Store::getSellList()
 
 int Store::getInventory(int id)
 {
-	readFile();
+
 	return stateProduct[id][0];
 }
 
@@ -213,11 +218,12 @@ void Store::displayInfo()
 
 	}
 }
-
 bool Store::displayMenu()
 {
 	int quit = 0;
 	ProductManager pm;
+	readFile();//!!!
+
 	while (quit != 1) {
 		int ch;
 		//cout << "\033[2J\033[1;1H";

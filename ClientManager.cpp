@@ -12,6 +12,18 @@ using namespace std;
 
 ClientManager::ClientManager()
 {
+	readFile();
+}
+ClientManager::~ClientManager()
+{
+
+	for (int i = 0; i < clientList.size(); i++)
+	{
+		delete clientList[i];
+	}
+}
+void ClientManager::readFile()
+{
 	ifstream file;
 	file.open("clientInfo.txt");
 	if (!file.fail()) {
@@ -27,7 +39,7 @@ ClientManager::ClientManager()
 
 	file.close();
 }
-ClientManager::~ClientManager()
+void ClientManager::writeFile()
 {
 	ofstream file;
 	file.open("clientInfo.txt");
@@ -41,10 +53,26 @@ ClientManager::~ClientManager()
 		}
 	}
 	file.close();
-	for (int i = 0; i < clientList.size(); i++)
-	{
-		delete clientList[i];
+}
+
+bool ClientManager::isExist(int id)
+{
+	if (clientList.find(id) != clientList.end()) {
+		return true;
 	}
+	else {
+		return false;
+	}
+}
+vector<int>ClientManager::getclientIdList()
+{
+	readFile();
+	vector<int>clientIdList;
+	for (const auto& v : clientList)
+	{
+		clientIdList.push_back(v.first);
+	}
+	return clientIdList;
 }
 void ClientManager::inputClient()
 {
@@ -68,6 +96,7 @@ void ClientManager::inputClient()
 		{
 			new_client->setId(1);
 			addClient(new_client);
+			writeFile();
 		}
 		else
 		{
@@ -76,6 +105,7 @@ void ClientManager::inputClient()
 
 			new_client->setId(++id);
 			addClient(new_client);
+			writeFile();
 		}
 
 	}
@@ -102,6 +132,7 @@ void ClientManager::deleteClient()
 		delete clientList[id];
 		clientList.erase(id);
 	}
+	writeFile();
 
 
 }
@@ -132,16 +163,19 @@ void ClientManager::updateClient()
 		cout << "Enter new name >> ";
 		getline(cin, new_name);
 		c->setName(new_name);
+		writeFile();
 		break;
 	case 2:
 		cout << "Enter new phone number >> ";
 		getline(cin, new_phone);
 		c->setPhoneNum(new_phone);
+		writeFile();
 		break;
 	case 3:
 		cout << "Enter new address >> ";
 		getline(cin, new_address);
 		c->setAddress(new_address);
+		writeFile();
 		break;
 	default:
 		break;

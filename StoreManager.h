@@ -8,6 +8,9 @@ public:
 	void sell();
 	//void record();
 	void displayInfo();
+	bool displayMenu();
+	void readFile();
+	void inputUserId();
 private:
 	map<int, vector<string>> sellItems;
 

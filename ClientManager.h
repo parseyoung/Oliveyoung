@@ -16,6 +16,10 @@ public:
 	vector<string> parseCSV(istream& file, char delimiter);
 	bool displayMenu();
 	void displayInfo();
+	vector<int>getclientIdList();
+	bool isExist(int id);
+	void writeFile();
+	void readFile();
 	~ClientManager();
 private:
 	map<int, Client*> clientList;

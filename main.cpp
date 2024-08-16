@@ -42,7 +42,7 @@ int main()
 			cm.displayMenu();
 			break;
 		case 4:
-			sm.displayInfo();
+			sm.displayMenu();
 			break;
 		case 5:
 			quit = 1;
