@@ -5,30 +5,30 @@
 #include"Store.h"
 #include<iostream>
 #include<vector>
+#include<string>
 #include<fstream>
-#include<map>
+#include<sstream>
+#include<istream>
+#include<iomanip>
 using namespace std;
 
 StoreManager::StoreManager()
 {
-	Store s;
+	vector<string> sellinf;
 	ProductManager pm;
-	vector<int> sellId;
-	map<int, Product*> productList;
-	vector<int> pi;//가격 재고
-	vector<string> nc;//이름 카테고리
-	sellId = s.getSellList();
-	for (int i = 0; i < sellId.size(); i++)
+	Store s;
+	map<int, Product*> productList = pm.getList();
+	vector<int> sellId = s.getSellList();
+	for (const auto& v : productList)
 	{
-		int id = sellId[i];
-		if (pm.isExist(sellId[i]))
+		if (find(sellId.begin(), sellId.end(), v.first) != sellId.end())
 		{
-			pi.push_back(productList[id]->getPrice());
-			pi.push_back(s.getInventory(id));
-			sellItems.insert({ id,{productList[id]->getName(),pi} });
-		}
-		else {
-			cout << "produuct number " << id << "is not exist." << endl;
+			vector<string> sellinfo;
+			sellinfo.push_back(v.second->getName());
+			sellinfo.push_back(to_string(v.second->getPrice()));
+			sellinfo.push_back(v.second->getCategory());
+			sellinfo.push_back(to_string(s.getInventory(v.first)));
+			sellItems[v.first] = sellinfo;
 		}
 	}
 }
@@ -43,12 +43,12 @@ void StoreManager::sell()
 }
 void StoreManager::displayInfo()
 {
-	cout << endl << "Name     |     Price       |     Category     |   " << endl;
+	cout << endl << "Name     |     Price       |     Category     |   Inventory" << endl;
 	for (const auto& v : sellItems) {
 
-		cout << setw(6) << setfill('0') << right << c->getId() << " | " << left;
-		cout << setw(14) << setfill(' ') << c->getName() << " | ";
-		cout << setw(14) << c->getPrice() << " | ";
-		cout << c->getCategory() << endl;
+		cout << setw(14) << setfill(' ') << v.second[0] << " | ";
+		cout << setw(14) << v.second[1] << " | ";
+		cout << setw(14) << setfill(' ') << v.second[2] << " | ";
+		cout << v.second[3] << endl;
 	}
 }

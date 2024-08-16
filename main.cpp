@@ -3,12 +3,14 @@
 #include "product.h"
 #include"productmanager.h"
 #include "Store.h"
+#include "StoreManager.h"
 #include<iostream>
 using  namespace std;
 int main()
 {//초기화 리스트 혹은 리스트 초기화?
 	ClientManager cm;
 	ProductManager pm;
+	StoreManager sm;
 	Store s;
 	int quit = 0;
 	int ch = 0;
@@ -40,7 +42,7 @@ int main()
 			cm.displayMenu();
 			break;
 		case 4:
-			cm.displayMenu();
+			sm.displayInfo();
 			break;
 		case 5:
 			quit = 1;

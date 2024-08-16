@@ -27,8 +27,9 @@ Store::~Store()
 }
 void Store::readFile()//csv파일 읽어오기
 {
+	stateProduct.clear();
 	ifstream file;
-	file.open("productState.csv");
+	file.open("productState.txt");
 	if (!file.fail()) {
 		while (!file.eof()) {
 			vector <int > state;
@@ -50,7 +51,7 @@ void Store::writeFile()//csv파일 쓰기 productList에 존재하는 id에 해당하는 정보�
 {
 	ofstream file;
 	ProductManager pm;
-	file.open("productState.csv");
+	file.open("productState.txt");
 	if (!file.fail())
 	{
 		for (const auto& v : stateProduct) { //상품의 아이디가 프로덕트리스트에 존재하는지 확인 후 있으면 저장
@@ -149,6 +150,7 @@ void Store::updateStatet()//상태 고치기 재고와 판매여부 수정가능
 
 vector<int> Store::getSellList()
 {
+	readFile();
 	vector <int> sellList;
 	for (const auto& v : stateProduct)
 	{
@@ -163,8 +165,10 @@ vector<int> Store::getSellList()
 
 int Store::getInventory(int id)
 {
+	readFile();
 	return stateProduct[id][0];
 }
+
 
 vector<string> Store::parseCSV(istream& file, char delimiter)
 {

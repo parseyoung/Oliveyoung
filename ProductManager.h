@@ -3,9 +3,14 @@
 //- ªË¡¶
 #ifndef _PRODUCTMANAGER_H__
 #define _PRODUCTMANAGER_H__
+#include<iostream>
 #include<vector>
-#include<map>
 #include<string>
+#include<fstream>
+#include<sstream>
+#include<istream>
+#include<iomanip>
+#include<map>
 using namespace std;
 class Product;
 class ProductManager

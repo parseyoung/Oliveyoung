@@ -6,10 +6,10 @@ public:
 	StoreManager();
 	~StoreManager();
 	void sell();
-	void record();
+	//void record();
 	void displayInfo();
 private:
-	map<int, pair<string, vector<int>>> sellItems;
+	map<int, vector<string>> sellItems;
 
 };
 #endif

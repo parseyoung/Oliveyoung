@@ -26,8 +26,9 @@ ProductManager::~ProductManager()
 }
 void ProductManager::readFile()
 {
+	productList.clear();
 	ifstream file;
-	file.open("productInfo.csv");
+	file.open("productInfo.txt");
 	if (!file.fail()) {
 		while (!file.eof()) {
 			vector<string> row = parseCSV(file, ',');
@@ -43,12 +44,13 @@ void ProductManager::readFile()
 }
 map<int, Product*> ProductManager::getList()
 {
+	readFile();
 	return productList;
 }
 void ProductManager::writeFile()
 {
 	ofstream file;
-	file.open("productInfo.csv");
+	file.open("productInfo.txt");
 	if (!file.fail())
 	{
 		for (const auto& v : productList) {
