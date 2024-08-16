@@ -70,8 +70,10 @@ void StoreManager::sell()//sell 에서 물건 안찾아짐//
 	string isPay;
 	for (const auto& v : sellItems)
 	{
-		if (find(v.second.begin(), v.second.end(), sellName) != v.second.end())
+		cout << v.second[0] << endl;
+		if (v.second[0] == sellName)
 		{
+
 			sellPrice = pm.getList()[v.first]->getPrice();
 			cout << "Selected " << sellName << "cost : " << sellPrice << endl;
 			cout << "Pay Y/N>> ";
@@ -81,6 +83,7 @@ void StoreManager::sell()//sell 에서 물건 안찾아짐//
 				cout << sellPrice << "has been paid" << endl;
 				sellItems[v.first].at(3) = to_string(stoi(sellItems[v.first].at(3)) - 1);
 				s.updateInventory(v.first);
+				break;
 			}
 			else
 			{
@@ -89,9 +92,9 @@ void StoreManager::sell()//sell 에서 물건 안찾아짐//
 			}
 		}
 		else {
-			cout << "Can't find product" << endl;
-			break;
+			continue;
 		}
+		cout << "Can't find product" << endl;
 	}
 }
 bool StoreManager::displayMenu()
