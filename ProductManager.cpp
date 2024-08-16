@@ -32,10 +32,12 @@ void ProductManager::loadProductsFromFile() {
         if (row.size() == 5) { // (id, 카테고리, 이름, 가격, 수량)
             try {
                 int id = std::stoi(row[0]);
-                int price = std::stoi(row[2]);
-                int quantity = std::stoi(row[3]);
-                string category = row[4];
-                Product* product = new Product(id, category, row[1], price, quantity);
+                string category = row[1];
+                string name = row[2];
+                int price = std::stoi(row[3]);
+                int quantity = std::stoi(row[4]);
+
+                Product* product = new Product(id, category, name, price, quantity);
                 mProductMap[id] = product;
 
                 //  CategoryManager에서 해당 카테고리 찾아서 상품을 카테고리에 추가
