@@ -150,7 +150,22 @@ void Store::updateStatet()//상태 고치기 재고와 판매여부 수정가능
 void Store::updateInventory(int id)
 {
 	int inventory = stateProduct[id][0];
-	stateProduct[id][0] = --inventory;
+	if ((inventory - 1) > 0) {
+		stateProduct[id][0] = --inventory;
+	}
+	else {
+		if (inventory - 1 == 0) {
+			stateProduct[id][0] = --inventory;
+			cout << "product number " << id << "is SoldOut. Check Inventory" << endl;
+			stateProduct[id][1] = 0;
+		}
+		else
+		{
+			cout << "product number " << id << "is SoldOut. Check Inventory" << endl;
+			stateProduct[id][1] = 0;
+		}
+
+	}
 	writeFile();
 }
 vector<int> Store::getSellList()
