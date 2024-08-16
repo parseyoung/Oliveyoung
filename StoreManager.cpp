@@ -4,8 +4,8 @@
 #include"Product.h"
 #include"Store.h"
 #include<iostream>
-#include<vector>
 #include<string>
+#include<vector>
 #include<fstream>
 #include<sstream>
 #include<istream>
@@ -15,6 +15,8 @@ using namespace std;
 StoreManager::StoreManager()
 {
 	readFile();
+	todayRecord.clear();
+	record();//전날 내용 지움
 }
 StoreManager::~StoreManager()
 {
@@ -39,6 +41,50 @@ void StoreManager::readFile()
 			sellItems.insert({ v.first,sellinfo });
 		}
 	}
+}
+void StoreManager::showTodayRecord()//csv파일 읽어오기
+{
+	ifstream file;
+	file.open("today record.txt");
+	cout << endl << "User Name     |     Product       |     Price     |   Category" << endl;
+	if (!file.fail()) {
+		while (!file.eof()) {
+			vector <int > state;
+			vector<string> row = parseCSV(file, ',');
+			if (row.size()) {
+				int id = atoi(row[0].c_str());
+				string name = row[1];
+				int price = atoi(row[2].c_str());
+				string category = row[3];
+				cout << setw(5) << setfill('0') << right << id << " | " << left;
+				cout << setw(14) << name << " | ";
+				cout << setw(14) << price << " | ";
+				cout << category << endl;
+			}
+		}
+	}
+
+	file.close();
+}
+void StoreManager::record()
+{
+	ofstream file;
+	ProductManager pm;
+	file.open("today record.txt");
+
+	if (!file.fail())
+	{
+		for (const auto& v : todayRecord) {
+			string name = v.second[0];
+			string price = v.second[1];
+			string category = v.second[2];
+			file << v.first << ", " << name << "," << price << ",";
+			file << category << endl;
+
+		}
+	}
+
+	file.close();
 }
 void StoreManager::inputUserId()
 {
@@ -83,6 +129,12 @@ void StoreManager::sell()//sell 에서 물건 안찾아짐//
 				cout << sellPrice << "has been paid" << endl;
 				sellItems[v.first].at(3) = to_string(stoi(sellItems[v.first].at(3)) - 1);
 				s.updateInventory(v.first);
+				vector<string> info;
+				info.push_back(v.second[0]);
+				info.push_back(v.second[1]);
+				info.push_back(v.second[2]);
+				todayRecord.insert({ v.first ,info });
+				record();//오늘기록파일에 구매자 아이디, 상품이름, 가격, 카테고리 저장
 				break;
 			}
 			else
@@ -126,7 +178,7 @@ bool StoreManager::displayMenu()
 			inputUserId();
 			break;
 		case 3:
-			displayInfo();
+			showTodayRecord();
 			break;
 		case 4:
 			quit = 1;
@@ -145,4 +197,30 @@ void StoreManager::displayInfo()
 		cout << setw(14) << setfill(' ') << v.second[2] << " | ";
 		cout << v.second[3] << endl;
 	}
+}
+vector<string> StoreManager::parseCSV(istream& file, char delimiter)
+{
+	vector<string> row;
+	stringstream ss;
+
+	string t = " \n\r\t";
+
+	while (!file.eof()) {
+		char c = file.get();
+		if (c == delimiter || c == '\r' || c == '\n') {
+			if (file.peek() == '\n') file.get();
+			string s = ss.str();
+			s.erase(0, s.find_first_not_of(t));
+			s.erase(s.find_last_not_of(t) + 1);
+			row.push_back(s);
+			ss.str("");
+			if (c != delimiter) break;
+		}
+		else {
+			ss << c;
+		}
+	}
+
+
+	return row;
 }
