@@ -3,6 +3,7 @@
 #include <utility>
 #include <sstream>
 #include <cstdlib>
+#include <iomanip>
 
 #include "ClientManager.h"
 #include "Client.h"
@@ -138,7 +139,7 @@ const bool ClientManager::displayMenu()
         case INPUT_CLIENT:
             // clearConsole();
 
-            cout << setw(45) << setfill('-') << "\n" << endl;
+            cout << std::setw(45) << setfill('-') << "\n" << endl;
             cout << "Input Client (name)" << endl;
             cout << setw(45) << setfill('-') << "\n" << endl;
             inputItem();

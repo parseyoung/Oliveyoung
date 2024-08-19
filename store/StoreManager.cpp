@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 
 #include "StoreManager.h"
 #include "Purchase.h"
