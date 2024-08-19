@@ -139,7 +139,7 @@ const bool ClientManager::displayMenu()
         case INPUT_CLIENT:
             // clearConsole();
 
-            cout << std::setw(45) << setfill('-') << "\n" << endl;
+            cout << setw(45) << setfill('-') << "\n" << endl;
             cout << "Input Client (name)" << endl;
             cout << setw(45) << setfill('-') << "\n" << endl;
             inputItem();
