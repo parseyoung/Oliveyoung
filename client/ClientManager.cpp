@@ -3,70 +3,66 @@
 #include <utility>
 #include <sstream>
 #include <cstdlib>
-
+#include <iomanip>
+#include <regex>
 #include "ClientManager.h"
 #include "Client.h"
+#include "../Validation/Validation.h"
 
 using namespace std;
 
+// ClientManager 클래스의 생성자: 클라이언트 데이터를 로드
 ClientManager::ClientManager()
 {
     load();
 }
 
+// ClientManager 클래스의 소멸자: 동적으로 할당된 Client 객체들을 삭제
 ClientManager::~ClientManager()
 {
-    // 동적으로 할당된 Client 객체를 삭제
     for (auto& pair : mClientMap) {
         delete pair.second;
     }
     mClientMap.clear(); // 맵을 비우고, 모든 요소를 제거
 }
 
+// ClientManager 클래스의 복사 생성자: 깊은 복사 
 ClientManager::ClientManager(const ClientManager& other)
 {
-    // 깊은 복사: 다른 객체의 클라이언트들에 대해 새로운 Client 객체를 생성
+    // 다른 ClientManager 객체의 클라이언트 맵을 깊은 복사하여 새로운 Client 객체를 생성
     for (const auto& pair : other.mClientMap) {
         // 클라이언트를 복사하여 새로운 메모리 공간에 저장
         mClientMap[pair.first] = new Client(*(pair.second));
     }
 }
 
-// 데이터 관리 
-const bool ClientManager::add(const Client& client)
+// 클라이언트를 추가하는 함수
+bool ClientManager::add(const Client& client)
 {
-    Client* pClient = new Client(client.getId(), client.getName(), client.getPhoneNumber(), client.getPoint());
-    
-    pair<map<unsigned int, Client*>::iterator, bool> result = 
-        mClientMap.insert(make_pair(client.getId(), pClient));
-    if (result.second == false) { // 키 중복인 경우 실패
-        delete pClient;
-        return false;
+     bool result = BaseEntity<Client>::add(client);
+
+    // BaseEntity::add가 성공적으로 엔티티를 추가했으면, 파일에도 클라이언트 정보를 추가
+    if (result) {
+        appendToFile(client);
     }
 
-    appendToFile(client);
-
-    return true;
+    return result;
 }
 
-
-const bool ClientManager::remove(const unsigned int id)
+// 클라이언트를 제거하는 함수
+bool ClientManager::remove(const unsigned int id)
 {
-    auto it = mClientMap.find(id);
-    if (it == mClientMap.end()) {
-        return false;
+    bool result = BaseEntity<Client>::remove(id);  // BaseEntity의 remove 메소드 호출
+
+    if (result) {
+        removeFromFile(id);   // 파일에서 상품 제거
     }
 
-    delete it->second;    // 메모리 해제
-    mClientMap.erase(it); // 클라이언트 삭제
+    return result;
 
-    cout << "here" << endl;
-    removeFromFile(id);   // 파일에서 클라이언트 제거
-    cout << "here2" << endl;
-
-    return true;
 }
 
+// ID로 클라이언트를 검색하여 포인터를 반환하는 함수 (없으면 nullptr 반환)
 const Client* ClientManager::getByIdOrNull(const unsigned int id) const
 {
     auto iter = mClientMap.find(id);
@@ -77,7 +73,7 @@ const Client* ClientManager::getByIdOrNull(const unsigned int id) const
     return (iter->second);
 }
 
-// 저장소 관리
+// 클라이언트 데이터를 파일에서 로드하는 함수
 void ClientManager::load()
 {
     ifstream fin;
@@ -91,8 +87,6 @@ void ClientManager::load()
         vector<string> row = parseCSV(fin, ',');
         if(row.size()) {
             unsigned int id = atoi(row[0].c_str());
-            // string name = row[1];
-            // string phoneNumber = row[2];
             int point = atoi(row[3].c_str());
             Client* client = new Client(id, row[1], row[2], point);
             mClientMap.insert(make_pair(id, client));
@@ -102,12 +96,13 @@ void ClientManager::load()
     fin.close( );
 }
 
+// 콘솔을 지우는 함수 (추가적인 기능으로 clear 명령을 사용)
 void clearConsole() {
     system("clear");
-    // cout << "\033[2J\033[1;1H";
 }
 
-// View 관리
+
+// 메뉴를 표시하고 사용자 입력을 받는 함수
 const bool ClientManager::displayMenu() 
 {
     enum MenuOptions { DISPLAY_CLIENT_LIST = 1, INPUT_CLIENT, DELETE_CLIENT, QUIT_PROGRAM };
@@ -128,6 +123,7 @@ const bool ClientManager::displayMenu()
     cin >> menu;
     switch(menu) {
         case DISPLAY_CLIENT_LIST: 
+            // 클라이언트 목록 표시
             // clearConsole();
 
             displayItemsInfo();
@@ -136,6 +132,7 @@ const bool ClientManager::displayMenu()
 
             break;
         case INPUT_CLIENT:
+            // 클라이언트 입력
             // clearConsole();
 
             cout << setw(45) << setfill('-') << "\n" << endl;
@@ -145,6 +142,7 @@ const bool ClientManager::displayMenu()
 
             break;
         case DELETE_CLIENT:
+            // 클라이언트 삭제
             // clearConsole();
 
             cout << setw(45) << setfill('-') << "\n" << endl;
@@ -170,7 +168,7 @@ const bool ClientManager::displayMenu()
 }
 
 
-
+// 클라이언트 목록을 표시하는 함수
 void ClientManager::displayItemsInfo() const
 {
     cout << "Client list" << endl;
@@ -187,34 +185,52 @@ void ClientManager::displayItemsInfo() const
     cout << "return to menu: enter any key" << endl;
 }
 
-void ClientManager::inputItem()
-{
+
+// 사용자로부터 클라이언트 정보를 입력받아 Client를 추가
+void ClientManager::inputItem() {
     string name;
     string phoneNumber;
-    int point;
-    cout << "name : "; cin >> name;
-    cout << "phone number : "; cin >> phoneNumber;
-    cout << "initial point : "; cin >> point;
-    // validate field
+    int points;
 
-    add(Client(generateId(), name, phoneNumber, point));
-}
-
-const unsigned int ClientManager::generateId() const
-{
-
-    // 로직의 수정이 필요할듯
-
-    if (mClientMap.size() == 0) {
-        return 0;
-    } else {
-        auto elem = mClientMap.end(); 
-        int id = (--elem)->first;
-        return ++id;
+    // 클라이언트 이름 유효성 검사
+    while (true) {
+        cout << "name : "; cin >> name;
+        if (Validation::validateClientName(name)) {
+            break;
+        }
     }
+
+    // 전화번호 유효성 검사
+    while (true) {
+        cout << "phone number : "; cin >> phoneNumber;
+        if (Validation::validateClientPhoneNumber(phoneNumber)) {
+            break;
+        }
+    }
+
+    // 포인트 유효성 검사
+    while (true) {
+        cout << "initial point : "; cin >> points;
+        if (cin.fail()) {
+            cin.clear(); // 입력 스트림을 초기화
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 잘못된 입력을 무시
+            cout << "Error: Points must be a non-negative integer." << endl;
+        }
+        else if (Validation::validateClientPoints(points)) {
+            break;
+        }
+    }
+
+    // Client를 추가
+    add(Client(generateId(), name, phoneNumber, points));
 }
 
+unsigned int ClientManager::generateId() const
+{
+    return BaseEntity<Client>::generateId(mClientMap);
+}
 
+// CSV 파일을 파싱하여 데이터를 벡터로 반환하는 함수
 vector<string> ClientManager::parseCSV(istream& fin, char delimiter)
 {
     stringstream ss;
@@ -241,6 +257,7 @@ vector<string> ClientManager::parseCSV(istream& fin, char delimiter)
     return row;
 }
 
+// 클라이언트 정보를 파일에 추가하는 함수
 void ClientManager::appendToFile(const Client& client) const
 {
     ofstream fout;
@@ -251,11 +268,13 @@ void ClientManager::appendToFile(const Client& client) const
     }
 
     cout << client.toString() << endl;
+    // 클라이언트 정보를 파일에 추가
     fout << client.toString() << endl;
 
     fout.close();
 }
 
+// 파일에서 특정 ID의 클라이언트를 제거하는 함수
 void ClientManager::removeFromFile(const unsigned int id) const
 {
     ifstream fin;

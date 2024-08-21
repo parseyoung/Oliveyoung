@@ -1,62 +1,89 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
+#include <iomanip>
 #include "StoreManager.h"
 #include "Purchase.h"
+#include "../product/ProductManager.h"
+#include "../client/ClientManager.h"
+#include "StockInfo.h"
 
 using namespace std;
 
+const string LOG_FILE = "store_log.txt"; // 로그 파일 이름
+
+// StoreManager 클래스의 생성자: 상점, 제품 관리자, 클라이언트 관리자를 받아 객체를 생성
 StoreManager::StoreManager(Store& store, ProductManager& productManager, ClientManager& clientManager)
     : mStore(store)
     , mProductManager(productManager) 
     , mClientManager(clientManager) 
 {
-    loadStockInfo();
+    loadStockInfo(); // 초기화 시 재고 정보 로드
 }
 
 StoreManager::~StoreManager() 
 {
 }
-
+// StoreManager 클래스의 복사 생성자
 StoreManager::StoreManager(const StoreManager& other)
     : mStore(other.mStore)
     , mProductManager(other.mProductManager)
     , mClientManager(other.mClientManager)
 {
 }
-
+// 제품의 재고 수량을 설정하는 함수
 const bool StoreManager::setQuantity(const Product& product, const unsigned int quantity)
 {
     auto& stockMap = mStore.getProductStockMap();
     auto it = stockMap.find(product.getId());
     if (it != stockMap.end()) {
-        it->second.setQuantity(quantity);
+        it->second.setQuantity(quantity); // 재고 수량 설정
         return true;
     }
     return false;
 }
 
-
+// 제품의 가용성 여부를 설정하는 함수
 const bool StoreManager::setAvailability(const Product& product, const bool availability) 
 {
     auto& stockMap = mStore.getProductStockMap();
     auto it = stockMap.find(product.getId());
     if (it != stockMap.end()) {
-        it->second.setAvailability(availability);
+        it->second.setAvailability(availability); // 가용성 여부 설정
         return true;
     }
     return false;
 }
 
-const bool StoreManager::sell(const unsigned int productId, const unsigned int clientId) 
-{
+void StoreManager::logToFile(const string& message) const {
+    ofstream logFile;
+    logFile.open(LOG_FILE, ios_base::app);
+    if (logFile.is_open() == false) {
+        cerr << "[StoreManager] Failed to open log file for writing." << endl;
+        return;
+    }
+
+    // 현재 날짜와 시간 가져오기
+    time_t now = time(0);
+    tm* ltm = localtime(&now);
+    char dateStr[20];
+    snprintf(dateStr, sizeof(dateStr), "%04d-%02d-%02d %02d:%02d:%02d",
+        1900 + ltm->tm_year, 1 + ltm->tm_mon, ltm->tm_mday,
+        ltm->tm_hour, ltm->tm_min, ltm->tm_sec);
+
+    logFile << dateStr << " - " << message << endl;
+
+    logFile.close();
+}
+
+// 제품을 판매하는 함수
+const bool StoreManager::sell(const unsigned int productId, const unsigned int clientId) {
     auto& stockMap = mStore.getProductStockMap();
     auto it = stockMap.find(productId);
-    if (it != stockMap.end() 
+    if (it != stockMap.end()
         && it->second.getQuantity() > 0 && it->second.isAvailable() == true) {
-        unsigned int qauntity = it->second.getQuantity();
-        it->second.setQuantity(qauntity - 1);  // 재고 감소
+        unsigned int quantity = it->second.getQuantity();
+        it->second.setQuantity(--quantity);  // 재고 감소
 
         // CSV 파일에서 해당 제품의 재고 업데이트
         updateStockInfoInFile(productId, it->second);
@@ -64,11 +91,28 @@ const bool StoreManager::sell(const unsigned int productId, const unsigned int c
         // 구매 내역 기록
         recordPurchase(productId, clientId);
 
+        // 로그 기록
+        stringstream logMessage;
+        logMessage << "Product sold: Product ID = " << productId
+            << ", Client ID = " << clientId
+            << ", New Quantity = " << quantity;
+        logToFile(logMessage.str());
+
         return true;
     }
-    return false;
+    else {
+        // 로그 기록 실패 원인
+        stringstream logMessage;
+        logMessage << "Failed to sell product: Product ID = " << productId
+            << ", Client ID = " << clientId
+            << ", Reason = Out of stock or not available";
+        logToFile(logMessage.str());
+
+        return false;
+    }
 }
 
+// 구매를 기록하는 함수
 void StoreManager::recordPurchase(const unsigned int productId, const unsigned int clientId) const
 {
     Purchase purchase = Purchase(productId, clientId);
@@ -80,18 +124,18 @@ void StoreManager::recordPurchase(const unsigned int productId, const unsigned i
         return;
     }
 
-    fout << purchase.toString() << endl;
+    fout << purchase.toString() << endl; // 구매 기록을 파일에 저장
 
     fout.close();
 }
 
-
+// 파일에 재고 정보를 업데이트하는 함수
 void StoreManager::updateStockInfoInFile(const unsigned int productId, const StockInfo& updatedStockInfo) const 
 {
 
 cout << "test1" << endl;
     ifstream fin;
-    fin.open(STOCK_INFO.c_str(), ios_base::app);
+    fin.open(STOCK_INFO.c_str(), ios_base::app); // 재고 정보 파일을 읽기 모드
     if (fin.is_open() == false) {
         cerr << "[StoreManager] Failed to open file for reading" << endl;
         return;
@@ -99,7 +143,7 @@ cout << "test1" << endl;
 cout << "test2" << endl;
 
     ofstream fout;
-    fout.open(TEMP_BUFFER.c_str());
+    fout.open(TEMP_BUFFER.c_str()); // 임시 파일을 쓰기 모드
     if (fout.is_open() == false) {
         cerr << "[StoreManager] Failed to open temporary file for writing" << endl;
         fin.close();
@@ -111,7 +155,7 @@ cout << "test3" << endl;
 
     string line;
     bool found = false;
-    while (getline(fin, line)) {
+    while (getline(fin, line)) { // 파일의 각 줄을 읽음
         istringstream iss(line);
         unsigned int id;
         char comma;
@@ -143,11 +187,11 @@ cout << "test4" << endl;
     rename(TEMP_BUFFER.c_str(), STOCK_INFO.c_str());  // 임시 파일을 원본 파일로 교체
 }
 
-
+// 파일에서 재고 정보를 로드하는 함수
 void StoreManager::loadStockInfo() 
 {
     ifstream fin;
-    fin.open(STOCK_INFO);
+    fin.open(STOCK_INFO); // 재고 정보 파일을 읽기 모드로 연다
     if(fin.fail() == true) {
         cerr << "[StoreManager] Fail: open file for reading" << endl;
         return ;
@@ -165,7 +209,7 @@ void StoreManager::loadStockInfo()
     }
     fin.close();
 
-    mStore.initialize(stockMap);
+    mStore.initialize(stockMap); // 로드된 정보를 상점에 초기화
 }
 
 
@@ -303,8 +347,7 @@ const bool StoreManager::displayMenu()
     return false;
 }
 
-void StoreManager::setStockInfo()
-{
+void StoreManager::setStockInfo() {
     unsigned int productId;
     unsigned int newQuantity;
     bool availability;
@@ -328,14 +371,30 @@ void StoreManager::setStockInfo()
         it->second.setQuantity(newQuantity);
         it->second.setAvailability(availability);
         cout << "Stock information updated successfully." << endl;
-    } else {
+
+        // 로그 기록
+        stringstream logMessage;
+        logMessage << "Stock info updated: Product ID = " << productId
+            << ", New Quantity = " << newQuantity
+            << ", Availability = " << (availability ? "Available" : "Not Available");
+        logToFile(logMessage.str());
+    }
+    else {
         // If product ID not found in stock map, check with ProductManager
         if (mProductManager.contains(productId)) {
             // Add new stock info to the stock map
             StockInfo newStockInfo = StockInfo(newQuantity, availability);
             stockMap[productId] = newStockInfo;
             cout << "Product ID added to stock map and stock information updated successfully." << endl;
-        } else {
+
+            // 로그 기록
+            stringstream logMessage;
+            logMessage << "New product added: Product ID = " << productId
+                << ", Quantity = " << newQuantity
+                << ", Availability = " << (availability ? "Available" : "Not Available");
+            logToFile(logMessage.str());
+        }
+        else {
             cout << "Product ID not found in Product Manager. Please check the Product ID and try again." << endl;
             return;
         }
@@ -451,3 +510,4 @@ void StoreManager::displayPurchaseHistory() const
 
     fin.close();
 }
+

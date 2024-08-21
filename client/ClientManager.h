@@ -6,6 +6,7 @@
 
 #include "Client.h"
 #include "../database/Constants.h"
+#include "../Validation/BaseEntity.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ namespace ClientManagerConstants {
     const string RESOURCE = DIR_DATABASE + "client_list.csv";
 }
 
-class ClientManager
+class ClientManager : public BaseEntity<Client> 
 {
 public:
     ClientManager();
@@ -22,9 +23,10 @@ public:
     ClientManager(const ClientManager& other);
     
     // 데이터 관리 
-    const bool add(const Client& client);
-    const bool remove(const unsigned int id);
+    bool add(const Client& client) override;
+    bool remove(const unsigned int id) override;
     const Client* getByIdOrNull(const unsigned int id) const;
+
 
     // 저장소 관리
     void load();
@@ -35,11 +37,11 @@ public:
     void inputItem();
 
 private:
-    const unsigned int generateId() const;
     
+    unsigned int generateId() const;  // ID 생성 메소드
     vector<string> parseCSV(istream& stream, char delimiter);
-    void appendToFile(const Client& client) const;
-    void removeFromFile(const unsigned int id) const;
+    void appendToFile(const Client& client) const override;
+    void removeFromFile(const unsigned int id) const override;
 
     map<unsigned int, Client*> mClientMap;
 };
