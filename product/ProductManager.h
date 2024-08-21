@@ -23,7 +23,7 @@ public:
     // 데이터 관리 
     const bool add(const Product& product);
     const bool remove(const unsigned int id);
-    const Product* getByIdOrNull(const unsigned int id) const;
+    const Product& getById(const unsigned int id) const;
 
     const bool contains(const unsigned int id) const;
 

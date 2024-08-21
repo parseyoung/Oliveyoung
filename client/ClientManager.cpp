@@ -67,14 +67,14 @@ const bool ClientManager::remove(const unsigned int id)
     return true;
 }
 
-const Client* ClientManager::getByIdOrNull(const unsigned int id) const
+const Client& ClientManager::getById(const unsigned int id) const
 {
     auto iter = mClientMap.find(id);
     if (iter == mClientMap.end()) {
-        return nullptr;
+        throw std::out_of_range("Client with the given ID not found.");
     }
 
-    return (iter->second);
+    return *(iter->second);
 }
 
 // 저장소 관리

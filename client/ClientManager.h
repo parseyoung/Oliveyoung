@@ -24,7 +24,7 @@ public:
     // 데이터 관리 
     const bool add(const Client& client);
     const bool remove(const unsigned int id);
-    const Client* getByIdOrNull(const unsigned int id) const;
+    const Client& getById(const unsigned int id) const;
 
     // 저장소 관리
     void load();

@@ -64,14 +64,14 @@ const bool ProductManager::remove(const unsigned int id)
     return true;
 }
 
-const Product* ProductManager::getByIdOrNull(const unsigned int id) const
+const Product& ProductManager::getById(const unsigned int id) const
 {
     auto iter = mProductMap.find(id);
     if (iter == mProductMap.end()) {
-        return nullptr;
+        throw std::out_of_range("Product with the given ID not found.");
     }
 
-    return (iter->second);
+    return *(iter->second);
 }
 
 const bool ProductManager::contains(const unsigned int id) const
