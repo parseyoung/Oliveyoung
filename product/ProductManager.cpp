@@ -39,21 +39,13 @@ ProductManager::ProductManager(const ProductManager& other)
 // Product 추가
 bool ProductManager::add(const Product& product)
 {
-    bool result = BaseEntity<Product>::add(product);
-    if (result) {
-        appendToFile(product);
-    }
+    return result = BaseEntity<Product>::add(product);
 }
 // Product 제거
 bool ProductManager::remove(const unsigned int id)
 {
-    bool result = BaseEntity<Product>::remove(id);  // BaseEntity의 remove 메소드 호출
+   return BaseEntity<Product>::remove(id);  // BaseEntity의 remove 메소드 호출
 
-    if (result) {
-        removeFromFile(id);   // 파일에서 상품 제거
-    }
-
-    return result;
 }
 
 // ID로 Product 검색: 해당 ID의 Product가 있으면 반환, 없으면 nullptr 반환

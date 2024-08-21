@@ -39,26 +39,15 @@ ClientManager::ClientManager(const ClientManager& other)
 // 클라이언트를 추가하는 함수
 bool ClientManager::add(const Client& client)
 {
-     bool result = BaseEntity<Client>::add(client);
+    return BaseEntity<Client>::add(client);
 
-    // BaseEntity::add가 성공적으로 엔티티를 추가했으면, 파일에도 클라이언트 정보를 추가
-    if (result) {
-        appendToFile(client);
-    }
-
-    return result;
 }
 
 // 클라이언트를 제거하는 함수
 bool ClientManager::remove(const unsigned int id)
 {
-    bool result = BaseEntity<Client>::remove(id);  // BaseEntity의 remove 메소드 호출
+    return BaseEntity<Client>::remove(id);  // BaseEntity의 remove 메소드 호출
 
-    if (result) {
-        removeFromFile(id);   // 파일에서 상품 제거
-    }
-
-    return result;
 
 }
 
