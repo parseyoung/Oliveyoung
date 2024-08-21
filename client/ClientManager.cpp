@@ -3,6 +3,7 @@
 #include <utility>
 #include <sstream>
 #include <cstdlib>
+#include <iomanip>
 
 #include "ClientManager.h"
 #include "Client.h"

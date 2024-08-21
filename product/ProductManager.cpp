@@ -3,6 +3,8 @@
 #include <utility>
 #include <sstream>
 #include <cstdlib>
+#include <iomanip>
+#include <vector>
 
 #include "ProductManager.h"
 #include "Product.h"
