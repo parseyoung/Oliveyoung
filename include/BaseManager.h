@@ -17,7 +17,7 @@ template<typename T>
 class BaseManager 
 {
 public:
-    BaseManager(const std::string& resourcePath);
+    BaseManager(const string& resourcePath);
     ~BaseManager();
     
     const bool add(const T& item);
@@ -26,7 +26,7 @@ public:
     const bool contains(const unsigned int id) const;
 
     void load();
-    
+
 protected:
     const unsigned int generateId() const;
     map<unsigned int, T*> mItemMap;
