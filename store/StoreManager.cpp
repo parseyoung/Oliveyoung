@@ -89,7 +89,12 @@ void StoreManager::recordPurchase(const unsigned int productId, const unsigned i
 
 void StoreManager::updateStockInfoInFile(const unsigned int productId, const StockInfo& updatedStockInfo) const 
 {
-
+    if(mProductManager.contains(productId) == false)
+    {
+        cout << "Product ID not found in Product Manager. Please check the Product ID and try again." << endl;
+        removeFromFile(productId);
+        return;
+    }
 cout << "test1" << endl;
     ifstream fin;
     fin.open(STOCK_INFO.c_str(), ios_base::app);
@@ -159,6 +164,12 @@ void StoreManager::load()
     while (getline(fin, line)) {
         try {
             auto productStockPair = Store::createStockInfoFromString(line);
+            if(mProductManager.contains(productStockPair.first) == false)
+            {
+                cout << "Product ID not found in Product Manager. Please check the Product ID and try again." << endl;
+                removeFromFile(productStockPair.first);
+            return;
+            }
             stockMap[productStockPair.first] = productStockPair.second;
             
         } catch (const exception& e) {
@@ -166,7 +177,20 @@ void StoreManager::load()
         }
     }
     fin.close();
+     if (stockMap.empty()) {
+        cout << "No stock information available." << endl;
+        return;
+    }
 
+    // cout << "Product ID | Quantity | Availability" << endl;
+    // cout << "--------------------------------------" << endl;
+    
+    // for (const auto& entry : stockMap) {
+    //     cout << entry.first << " | " 
+    //          << entry.second.getQuantity() << " | " 
+    //          << (entry.second.isAvailable() ? "Available" : "Not Available") 
+    //          << endl;
+    // }
     mStore.initialize(stockMap);
 }
 
@@ -229,6 +253,7 @@ void StoreManager::removeFromFile(const unsigned int id) const
     } else {
         remove(TEMP_BUFFER.c_str());  // 제거할 항목이 없으면 임시 파일을 삭제합니다.
     }
+
 }
 
 // 메뉴 표시
@@ -328,7 +353,12 @@ void StoreManager::handleSellProduct()
 
     cout << "Enter Product ID to sell: ";
     cin >> productId;
-    
+    if(mProductManager.contains(productId) == false)
+    {
+        cout << "Product ID not found in Product Manager. Please check the Product ID and try again." << endl;
+        removeFromFile(productId);
+        return;
+    }
     cout << "Enter Client ID: ";
     cin >> clientId;
 
