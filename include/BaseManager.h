@@ -20,24 +20,21 @@ public:
     BaseManager(const std::string& resourcePath);
     ~BaseManager();
     
-    // 데이터 관리
     const bool add(const T& item);
     const bool remove(const unsigned int id);
     const T& getById(const unsigned int id) const;
     const bool contains(const unsigned int id) const;
 
-    // 저장소 관리
     void load();
-
+    
 protected:
     const unsigned int generateId() const;
+    map<unsigned int, T*> mItemMap;
 
+private:
     vector<string> parseCSV(istream& fin, char delimiter);
     void appendToFile(const T& item) const;
     void removeFromFile(const unsigned int id) const;
-
-    // 멤버 변수는 상속받은 클래스에서 보호되어야 합니다.
-    map<unsigned int, T*> mItemMap;
 
     string mResourcePath;
 };
