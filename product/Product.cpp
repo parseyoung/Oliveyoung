@@ -5,6 +5,7 @@
 
 using namespace std;
 
+// Product 클래스의 생성자: 제품의 ID, 이름, 가격, 카테고리를 초기화
 Product::Product(unsigned int id, string name, unsigned int price, string category)
     : mId(id)
     , mName(name)
@@ -13,20 +14,23 @@ Product::Product(unsigned int id, string name, unsigned int price, string catego
 {
 }
 
+// Product 클래스의 소멸자:
 Product::~Product()
 {
 }
 
+// 복사 생성자:
 Product::Product(const Product& other)
 {
 }
 
+// 비교 연산자: 두 Product 객체의 ID가 동일한지 비교
 bool Product::operator==(const Product& other) const
 {
     return (mId == other.mId);
 }
 
-// getter
+// getter 함수: 각 멤버 변수의 값을 반환
 const unsigned int Product::getId() const
 {
     return mId;
@@ -47,13 +51,14 @@ const string Product::getCategory() const
     return mCategory;
 }
 
-// setter?
 
+// Product 객체를 문자열로 변환 : "ID,이름,가격,카테고리" 형식으로 반환
 const string Product::toString() const
 {
     return to_string(mId) + "," + mName + "," + to_string(mPrice) + "," + mCategory; 
 }
 
+// 주어진 문자열에서 Product 객체를 생성: "ID,이름,가격,카테고리" 형식을 파싱하여 객체 생성
 const Product Product::createFromString(const std::string& str)
 {
     istringstream iss(str);

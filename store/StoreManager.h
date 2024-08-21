@@ -52,6 +52,8 @@ private:
 
     void recordPurchase(const unsigned int productId, const unsigned int clientId) const;
 
+    void logToFile(const string& message) const;
+
     Store& mStore;  
     ProductManager& mProductManager;  
     ClientManager& mClientManager;

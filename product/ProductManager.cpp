@@ -3,67 +3,52 @@
 #include <utility>
 #include <sstream>
 #include <cstdlib>
-
+#include <iomanip>
+#include <vector>
 #include "ProductManager.h"
 #include "Product.h"
+#include "../Validation/Validation.h"
+
 
 using namespace std;
 
+// ProductManager 생성자: 프로그램 시작 시 상품 목록을 파일에서 불러옴
 ProductManager::ProductManager()
 {
     load();
 }
 
+// ProductManager 소멸자: 모든 동적으로 할당된 Product 객체를 삭제
 ProductManager::~ProductManager()
 {
-    // 동적으로 할당된 Product 객체를 삭제
     for (auto& pair : mProductMap) {
-        delete pair.second;
+        delete pair.second; // 객체 메모리 해제
     }
     mProductMap.clear(); // 맵을 비우고, 모든 요소를 제거
 }
 
+// 복사 생성자: 깊은 복사를 통해 다른 ProductManager 객체의 모든 Product를 복사
 ProductManager::ProductManager(const ProductManager& other)
 {
-    // 깊은 복사: 다른 객체의 Product들에 대해 새로운 Product 객체를 생성
     for (const auto& pair : other.mProductMap) {
         // Product를 복사하여 새로운 메모리 공간에 저장
         mProductMap[pair.first] = new Product(*(pair.second));
     }
 }
     
-// 데이터 관리 
-const bool ProductManager::add(const Product& product)
+// Product 추가
+bool ProductManager::add(const Product& product)
 {
-    Product* pProduct = new Product(product.getId(), product.getName(), product.getPrice(), product.getCategory());
-    
-    pair<map<unsigned int, Product*>::iterator, bool> result = 
-        mProductMap.insert(make_pair(product.getId(), pProduct));
-    if (result.second == false) { // 키 중복인 경우 실패
-        delete pProduct;
-        return false;
-    }
+    return result = BaseEntity<Product>::add(product);
+}
+// Product 제거
+bool ProductManager::remove(const unsigned int id)
+{
+   return BaseEntity<Product>::remove(id);  // BaseEntity의 remove 메소드 호출
 
-    appendToFile(product);
-
-    return true;
 }
 
-const bool ProductManager::remove(const unsigned int id)
-{
-    auto it = mProductMap.find(id);
-    if (it == mProductMap.end()) {
-        return false;
-    }
-
-    delete it->second;    // 메모리 해제
-    mProductMap.erase(it); // Product 삭제
-
-    removeFromFile(id);   // 파일에서 Product 제거
-
-    return true;
-}
-
+// ID로 Product 검색: 해당 ID의 Product가 있으면 반환, 없으면 nullptr 반환
 const Product* ProductManager::getByIdOrNull(const unsigned int id) const
 {
     auto iter = mProductMap.find(id);
@@ -74,16 +59,17 @@ const Product* ProductManager::getByIdOrNull(const unsigned int id) const
     return (iter->second);
 }
 
+// 해당 ID의 Product가 존재하는지 확인
 const bool ProductManager::contains(const unsigned int id) const
 {
     auto iter = mProductMap.find(id);
-    if (iter == mProductMap.end()) {
+    if (iter == mProductMap.end()) { // 해당 ID의 Product가 없는 경우
         return false;
     }
     return true;
 }
 
-// 저장소 관리
+// 파일에서 제품 목록을 불러와서 맵에 저장
 void ProductManager::load()
 {
     ifstream fin;
@@ -113,7 +99,7 @@ void ProductManager::load()
 //     // cout << "\033[2J\033[1;1H";
 // }
 
-// View 관리
+// 메뉴를 화면에 표시하고 사용자의 입력을 처리
 const bool ProductManager::displayMenu()
 {
     enum MenuOptions { DISPLAY_CLIENT_LIST = 1, INPUT_CLIENT, DELETE_CLIENT, QUIT_PROGRAM };
@@ -174,7 +160,7 @@ const bool ProductManager::displayMenu()
 
     return false;
 }
-
+// 저장된 모든 Product의 정보를 화면에 표시
 void ProductManager::displayItemsInfo() const
 {
     cout << "Product list" << endl;
@@ -190,35 +176,52 @@ void ProductManager::displayItemsInfo() const
     cout << endl;
     cout << "return to menu: enter any key" << endl;
 }
-
-void ProductManager::inputItem()
-{
+// 사용자로부터 제품 정보를 입력받아 Product를 추가
+void ProductManager::inputItem() {
     string name;
     int price;
     string category;
-    cout << "name : "; cin >> name;
-    cout << "price : "; cin >> price;
-    cout << "category : "; cin >> category;
-    // validate field
 
+    // 제품 이름 유효성 검사
+    while (true) {
+        cout << "name : "; cin >> name;
+        if (Validation::validateProductName(name)) {
+            break;
+        }
+    }
+
+    // 제품 가격 유효성 검사
+    while (true) {
+        cout << "price : "; cin >> price;
+        if (cin.fail()) {
+            cin.clear(); // 입력 스트림을 초기화
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 잘못된 입력을 무시
+            cout << "Error: Price must be a non-negative integer." << endl;
+        }
+        else if (Validation::validateProductPrice(price)) {
+            break;
+        }
+    }
+
+    // 제품 카테고리 유효성 검사
+    while (true) {
+        cout << "category : "; cin >> category;
+        if (Validation::validateProductCategory(category)) {
+            break;
+        }
+    }
+
+    // Product를 추가
     add(Product(generateId(), name, price, category));
 }
 
-
-const unsigned int ProductManager::generateId() const
+// 새로운 Product ID를 생성
+unsigned int ProductManager::generateId() const
 {
-    // 로직의 수정이 필요할듯
-
-    if (mProductMap.size() == 0) {
-        return 0;
-    } else {
-        auto elem = mProductMap.end(); 
-        int id = (--elem)->first;
-        return ++id;
-    }
+    return BaseEntity<Product>::generateId(mProductMap);
 }
 
-
+// CSV 파일을 파싱하여 벡터에 각 요소를 저장
 vector<string> ProductManager::parseCSV(istream& fin, char delimiter)
 {
     stringstream ss;
@@ -244,7 +247,7 @@ vector<string> ProductManager::parseCSV(istream& fin, char delimiter)
     }
     return tokens;
 }
-
+// Product 정보를 파일에 추가
 void ProductManager::appendToFile(const Product& product) const
 {
     ofstream fout;
@@ -260,6 +263,7 @@ void ProductManager::appendToFile(const Product& product) const
     fout.close();
 }
 
+// 파일에서 특정 ID의 Product를 제거
 void ProductManager::removeFromFile(const unsigned int id) const
 {
     ifstream fin;
@@ -291,7 +295,7 @@ void ProductManager::removeFromFile(const unsigned int id) const
             }
             fout << line << endl;  // 제거할 Product가 아니면 기록합니다.
         } catch (const invalid_argument&) {
-            fout << line << endl;  // Product 생성에서 예외가 발생하면 기록합니다.
+            fout << line << endl;  // Product 생성에서 예외가 발생하ㅁ면 기록합니다.
         }
     }
 
