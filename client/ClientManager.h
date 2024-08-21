@@ -7,15 +7,10 @@
 
 using namespace std;
 
-// 저장소
-namespace ClientManagerConstants {
-    const string RESOURCE = DIR_DATABASE + "client_list.csv";
-}
-
 class ClientManager : public BaseManager<Client>
 {
 public:
-    ClientManager() : BaseManager<Client>(ClientManagerConstants::RESOURCE) {};
+    ClientManager();
 
     // View 관리
     const bool displayMenu();

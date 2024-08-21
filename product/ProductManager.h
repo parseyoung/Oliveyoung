@@ -7,15 +7,10 @@
 
 using namespace std;
 
-// 저장소
-namespace ProductManagerConstants {
-    const string RESOURCE = DIR_DATABASE + "product_list.csv";
-}
-
 class ProductManager : public BaseManager<Product>
 {
 public:
-    ProductManager() : BaseManager<Product>(ProductManagerConstants::RESOURCE) {};
+    ProductManager();
 
     // View 관리
     const bool displayMenu();

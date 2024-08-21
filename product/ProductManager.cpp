@@ -9,6 +9,15 @@
 
 using namespace std;
 
+namespace ProductManagerConstants {
+    const string RESOURCE = DIR_DATABASE + "product_list.csv";
+}
+
+ProductManager::ProductManager() : BaseManager<Product>(ProductManagerConstants::RESOURCE)
+{
+
+}
+
 // View 관리
 const bool ProductManager::displayMenu()
 {

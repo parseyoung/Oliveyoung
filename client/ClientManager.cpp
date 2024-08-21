@@ -9,6 +9,15 @@
 
 using namespace std;
 
+// 저장소
+namespace ClientManagerConstants {
+    const string RESOURCE = DIR_DATABASE + "client_list.csv";
+}
+
+ClientManager::ClientManager() : BaseManager<Client>(ClientManagerConstants::RESOURCE) 
+{
+}
+
 
 void clearConsole() {
     system("clear");
