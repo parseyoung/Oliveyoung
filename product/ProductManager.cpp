@@ -8,6 +8,7 @@
 
 #include "ProductManager.h"
 #include "Product.h"
+#include "../Manager.h"
 
 using namespace std;
 
@@ -55,12 +56,13 @@ const bool ProductManager::remove(const unsigned int id)
 {
     auto it = mProductMap.find(id);
     if (it == mProductMap.end()) {
+        cout<<"remove ERrro!!!"<<endl;
         return false;
     }
 
     delete it->second;    // 메모리 해제
     mProductMap.erase(it); // Product 삭제
-
+    
     removeFromFile(id);   // 파일에서 Product 제거
 
     return true;
@@ -88,6 +90,7 @@ const bool ProductManager::contains(const unsigned int id) const
 // 저장소 관리
 void ProductManager::load()
 {
+    cout<< "load PRoduct Manager"<<endl;
     ifstream fin;
     fin.open(ProductManagerConstants::RESOURCE);
     if(fin.fail() == true) {
@@ -138,7 +141,7 @@ const bool ProductManager::displayMenu()
         case DISPLAY_CLIENT_LIST: 
             // clearConsole();
 
-            displayItemsInfo();
+            displayInfo();
             cin.ignore();
             getchar();
 
@@ -159,7 +162,7 @@ const bool ProductManager::displayMenu()
             cout << "Delete Product" << endl;;
             cout << setw(45) << setfill('-') << "\n" << endl;
 
-            displayItemsInfo();
+            displayInfo();
             cout << "   Choose product id : ";
 
             cin >> id;
@@ -177,7 +180,7 @@ const bool ProductManager::displayMenu()
     return false;
 }
 
-void ProductManager::displayItemsInfo() const
+void ProductManager::displayInfo() const
 {
     cout << "Product list" << endl;
     cout << endl << "  ID  |     Name     " << endl;
@@ -205,13 +208,9 @@ void ProductManager::inputItem()
 
     add(Product(generateId(), name, price, category));
 }
-
-
-const unsigned int ProductManager::generateId() const
+const unsigned int ProductManager:: generateId() const
 {
-    // 로직의 수정이 필요할듯
-
-    if (mProductMap.size() == 0) {
+     if (mProductMap.size() == 0) {
         return 0;
     } else {
         auto elem = mProductMap.end(); 
@@ -219,34 +218,6 @@ const unsigned int ProductManager::generateId() const
         return ++id;
     }
 }
-
-
-vector<string> ProductManager::parseCSV(istream& fin, char delimiter)
-{
-    stringstream ss;
-    vector<string> tokens;
-    string t = " \n\r\t";
-
-    while(fin.eof() == false) {
-        char ch = fin.get();
-        if (ch == delimiter || ch == '\r' || ch == '\n') {
-            if(fin.peek()=='\n') fin.get();
-            string s = ss.str();
-            s.erase(0, s.find_first_not_of(t));
-            s.erase(s.find_last_not_of(t)+1);
-            tokens.push_back(s);
-            ss.str("");
-
-            if (ch != delimiter) {
-                break;
-            }
-        } else {
-            ss << ch;
-        }
-    }
-    return tokens;
-}
-
 void ProductManager::appendToFile(const Product& product) const
 {
     ofstream fout;

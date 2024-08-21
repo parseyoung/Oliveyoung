@@ -1,10 +1,8 @@
 #ifndef CLIENT_MANAGER_H
 #define CLIENT_MANAGER_H
 
-#include <vector>
-#include <map>
-
 #include "Client.h"
+#include "../Manager.h"
 #include "../database/Constants.h"
 
 using namespace std;
@@ -14,7 +12,7 @@ namespace ClientManagerConstants {
     const string RESOURCE = DIR_DATABASE + "client_list.csv";
 }
 
-class ClientManager
+class ClientManager : Manager
 {
 public:
     ClientManager();
@@ -31,16 +29,12 @@ public:
 
     // View 관리
     const bool displayMenu();
-    void displayItemsInfo() const;
+    void displayInfo() const;
     void inputItem();
-
 private:
-    const unsigned int generateId() const;
-    
-    vector<string> parseCSV(istream& stream, char delimiter);
     void appendToFile(const Client& client) const;
     void removeFromFile(const unsigned int id) const;
-
+    const unsigned int generateId() const;
     map<unsigned int, Client*> mClientMap;
 };
 

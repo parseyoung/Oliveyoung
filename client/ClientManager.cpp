@@ -131,7 +131,7 @@ const bool ClientManager::displayMenu()
         case DISPLAY_CLIENT_LIST: 
             // clearConsole();
 
-            displayItemsInfo();
+            displayInfo();
             cin.ignore();
             getchar();
 
@@ -152,7 +152,7 @@ const bool ClientManager::displayMenu()
             cout << "Delete Client" << endl;;
             cout << setw(45) << setfill('-') << "\n" << endl;
 
-            displayItemsInfo();
+            displayInfo();
             cout << "   Choose client id : ";
 
             cin >> id;
@@ -172,7 +172,7 @@ const bool ClientManager::displayMenu()
 
 
 
-void ClientManager::displayItemsInfo() const
+void ClientManager::displayInfo() const
 {
     cout << "Client list" << endl;
     cout << endl << "  ID  |     Name     " << endl;
@@ -200,48 +200,6 @@ void ClientManager::inputItem()
 
     add(Client(generateId(), name, phoneNumber, point));
 }
-
-const unsigned int ClientManager::generateId() const
-{
-
-    // 로직의 수정이 필요할듯
-
-    if (mClientMap.size() == 0) {
-        return 0;
-    } else {
-        auto elem = mClientMap.end(); 
-        int id = (--elem)->first;
-        return ++id;
-    }
-}
-
-
-vector<string> ClientManager::parseCSV(istream& fin, char delimiter)
-{
-    stringstream ss;
-    vector<string> row;
-    string t = " \n\r\t";
-
-    while(fin.eof() == false) {
-        char ch = fin.get();
-        if (ch == delimiter || ch == '\r' || ch == '\n') {
-            if(fin.peek()=='\n') fin.get();
-            string s = ss.str();
-            s.erase(0, s.find_first_not_of(t));
-            s.erase(s.find_last_not_of(t)+1);
-            row.push_back(s);
-            ss.str("");
-
-            if (ch != delimiter) {
-                break;
-            }
-        } else {
-            ss << ch;
-        }
-    }
-    return row;
-}
-
 void ClientManager::appendToFile(const Client& client) const
 {
     ofstream fout;
@@ -300,5 +258,15 @@ void ClientManager::removeFromFile(const unsigned int id) const
         rename(TEMP_BUFFER.c_str(), (ClientManagerConstants::RESOURCE).c_str());  // 임시 파일을 원본 파일 이름으로 변경합니다.
     } else {
         std::remove(TEMP_BUFFER.c_str());  // 제거할 클라이언트가 없으면 임시 파일을 삭제합니다.
+    }
+}
+const unsigned int ClientManager:: generateId() const
+{
+     if (mClientMap.size() == 0) {
+        return 0;
+    } else {
+        auto elem = mClientMap.end(); 
+        int id = (--elem)->first;
+        return ++id;
     }
 }

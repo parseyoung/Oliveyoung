@@ -13,7 +13,7 @@ StoreManager::StoreManager(Store& store, ProductManager& productManager, ClientM
     , mProductManager(productManager) 
     , mClientManager(clientManager) 
 {
-    loadStockInfo();
+    load();
 }
 
 StoreManager::~StoreManager() 
@@ -140,12 +140,12 @@ cout << "test4" << endl;
     fin.close();
     fout.close();
 
-    remove(STOCK_INFO.c_str());  // 원본 파일 삭제
+    remove(STOCK_INFO);  // 원본 파일 삭제
     rename(TEMP_BUFFER.c_str(), STOCK_INFO.c_str());  // 임시 파일을 원본 파일로 교체
 }
 
 
-void StoreManager::loadStockInfo() 
+void StoreManager::load() 
 {
     ifstream fin;
     fin.open(STOCK_INFO);
@@ -160,6 +160,7 @@ void StoreManager::loadStockInfo()
         try {
             auto productStockPair = Store::createStockInfoFromString(line);
             stockMap[productStockPair.first] = productStockPair.second;
+            
         } catch (const exception& e) {
             cerr << "[StoreManager] Error parsing line: " << e.what() << endl;
         }
@@ -169,37 +170,9 @@ void StoreManager::loadStockInfo()
     mStore.initialize(stockMap);
 }
 
-
-// CSV 파싱 함수
-vector<string> StoreManager::parseCSV(istream& fin, char delimiter)
-{
-    stringstream ss;
-    vector<string> row;
-    string t = " \n\r\t";
-
-    while(fin.eof() == false) {
-        char ch = fin.get();
-        if (ch == delimiter || ch == '\r' || ch == '\n') {
-            if(fin.peek()=='\n') fin.get();
-            string s = ss.str();
-            s.erase(0, s.find_first_not_of(t));
-            s.erase(s.find_last_not_of(t)+1);
-            row.push_back(s);
-            ss.str("");
-
-            if (ch != delimiter) {
-                break;
-            }
-        } else {
-            ss << ch;
-        }
-    }
-    return row;
-}
-
-// 파일에 데이터 추가
-void StoreManager::appendStockInfoToFile(const unsigned int productId, const StockInfo& stockInfo) const 
-{
+// 파일에 데이터 추가//don't use
+void StoreManager::appendToFile(const unsigned int productId, const StockInfo& stockInfo) const 
+{//appendStockInfoToFile
     ofstream fout;
     fout.open(STOCK_INFO, ios_base::app);
     if (fout.is_open() == false) {
@@ -213,8 +186,8 @@ void StoreManager::appendStockInfoToFile(const unsigned int productId, const Sto
 }
 
 // 파일에서 데이터 삭제
-void StoreManager::removeStockInfoFromFile(const unsigned int id) const
-{
+void StoreManager::removeFromFile(const unsigned int id) const
+{//removeStockInfoFromFile
     ifstream fin;
     fin.open(STOCK_INFO);
     if (fin.is_open() == false) {
@@ -282,7 +255,7 @@ const bool StoreManager::displayMenu()
             break;
 
         case DISPLAY_STOCK_INFO: 
-            displayStockInfo();
+            displayInfo();
             break;
 
         case DISPLAY_PURCHASE_HISTORY: 
@@ -371,7 +344,7 @@ void StoreManager::handleSellProduct()
     }
 }
 
-void StoreManager::displayStockInfo() const
+void StoreManager::displayInfo() const
 {
     auto& stockMap = mStore.getProductStockMap();
     
@@ -392,7 +365,7 @@ void StoreManager::displayStockInfo() const
 }
 
 void StoreManager::appendPurchaseToFile(unsigned int productId, unsigned int clientId) const
-{
+{//appendPurchaseToFile
     // 현재 날짜와 시간 가져오기
     time_t now = time(0);
     tm* ltm = localtime(&now);

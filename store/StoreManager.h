@@ -1,19 +1,18 @@
 #ifndef STORE_MANAGER_H
 #define STORE_MANAGER_H
 
-#include <vector>
-
 #include "Store.h"
 #include "../product/Product.h"
 #include "../product/ProductManager.h"
 #include "../client/ClientManager.h"
 #include "../database/Constants.h"
+#include "../Manager.h"
 
 // 저장소
 const string STOCK_INFO = DIR_DATABASE + "stock_list.csv";
 const string PURCHASE_HISTORY = DIR_DATABASE + "purchase_history.csv";
 
-class StoreManager
+class StoreManager : Manager
 {
 public:
     StoreManager(Store& store, ProductManager& productManager, ClientManager& clientManager);
@@ -31,29 +30,27 @@ public:
     const bool sell(const unsigned int productId, const unsigned int clientId);
 
 // 저장소 관리
-    void loadStockInfo();
+    void load();
 
 // View 관리
     const bool displayMenu();
 
 private:
     void handleSellProduct();
-    void displayStockInfo() const;
-    void displayPurchaseHistory() const;
+    void displayInfo() const;//displayStockInfo
+    
 
 
-    vector<string> parseCSV(istream& stream, char delimiter);
-
-    void appendStockInfoToFile(const unsigned int productId, const StockInfo& stockInfo) const;
-    void removeStockInfoFromFile(const unsigned int id) const;
+    void appendToFile(const unsigned int productId, const StockInfo& stockInfo) const;
+    void removeFromFile(const unsigned int id) const;
     void updateStockInfoInFile(const unsigned int productId, const StockInfo& updatedStockInfo) const;
 
+    void displayPurchaseHistory() const;
     void appendPurchaseToFile(unsigned int productId, unsigned int clientId) const;
-
     void recordPurchase(const unsigned int productId, const unsigned int clientId) const;
 
     Store& mStore;  
-    ProductManager& mProductManager;  
+    ProductManager& mProductManager; 
     ClientManager& mClientManager;
 };
 
