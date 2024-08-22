@@ -88,8 +88,8 @@ void ProductManager::displayItemsInfo() const
         Product* product = it.second;
         cout << setw(5) << setfill('0') << right << product->getId() << " | " << left;
         cout << setw(12) << setfill(' ') << product->getName() << endl;
-        cout << setw(12) << setfill(' ') << product->getPrice() << endl;
-        cout << setw(12) << setfill(' ') << product->getCategory() << endl;
+        cout << setw(12) << setfill(' ') << product->getPrice().get() << endl;
+        cout << setw(12) << setfill(' ') << product->getCategory().get() << endl;
     }
 
     cout << endl;
@@ -99,12 +99,19 @@ void ProductManager::displayItemsInfo() const
 void ProductManager::inputItem()
 {
     string name;
-    int price;
-    string category;
+    int priceInput;
+    string categoryInput;
     cout << "name : "; cin >> name;
-    cout << "price : "; cin >> price;
-    cout << "category : "; cin >> category;
+    cout << "price : "; cin >> priceInput;
+    cout << "category : "; cin >> categoryInput;
     // validate field
 
-    add(Product(generateId(), name, price, category));
+    try {
+        Price price(priceInput);
+        Category category(categoryInput);
+        add(Product(generateId(), name, price, category));
+    } catch (const invalid_argument& e) {
+        cerr << "Error: " << e.what() << endl;
+        cout << "Client 생성에 실패했습니다. 다시 시도하세요." << endl;
+    }
 }

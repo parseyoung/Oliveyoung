@@ -3,21 +3,23 @@
 
 #include <string>
 
+#include "Price.h"
+#include "Category.h"
+
 using namespace std;
 
 class Product
 {
 public:
-    Product(unsigned int id, string name, unsigned int price, string category);
+    Product(unsigned int id, const string name, const Price price, const Category category);
     ~Product();
-    Product(const Product& other);
     bool operator==(const Product& other) const;
 
     // getter
     const unsigned int getId() const;
     const string getName() const;
-    const unsigned int getPrice() const;
-    const string getCategory() const;
+    const Price& getPrice() const;
+    const Category& getCategory() const;
 
     // setter?
 
@@ -27,8 +29,8 @@ public:
 private:
     unsigned int mId;
     string mName;
-    unsigned int mPrice;
-    string mCategory; 
+    Price mPrice;
+    Category mCategory; 
 };
 
 #endif // PRODUCT_H

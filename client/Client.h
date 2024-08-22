@@ -3,22 +3,25 @@
 
 #include <string>
 
+#include "Name.h"
+#include "PhoneNumber.h"
+#include "Point.h"
+
 using namespace std;
 
 class Client
 {
 public:
-    Client(unsigned int id, string name, string phoneNumber, int point = 0);
+    Client(unsigned int id, const Name name, const PhoneNumber phoneNumber, const Point point);
     ~Client();
-    Client(const Client& other);
     bool operator==(const Client& other) const; 
 
 
     // getter
     const unsigned int getId() const;
-    const string getName() const;
-    const string getPhoneNumber() const;
-    const int getPoint() const;
+    const Name& getName() const;
+    const PhoneNumber& getPhoneNumber() const;
+    const Point& getPoint() const;
 
     // setter?
 
@@ -27,9 +30,9 @@ public:
 
 private:
     unsigned int mId;
-    string mName;
-    string mPhoneNumber;
-    int mPoint;
+    Name mName;
+    PhoneNumber mPhoneNumber;
+    Point mPoint;
 };
 
 #endif // CLIENT_H
