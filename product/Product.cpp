@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Product::Product(unsigned int id, string name, unsigned int price, string category)
+Product::Product(unsigned int id, const string name, const Price price, const Category category)
     : mId(id)
     , mName(name)
     , mPrice(price)
@@ -14,10 +14,6 @@ Product::Product(unsigned int id, string name, unsigned int price, string catego
 }
 
 Product::~Product()
-{
-}
-
-Product::Product(const Product& other)
 {
 }
 
@@ -37,12 +33,12 @@ const string Product::getName() const
     return mName;
 }
 
-const unsigned int Product::getPrice() const
+const Price& Product::getPrice() const
 {
     return mPrice;
 }
 
-const string Product::getCategory() const
+const Category& Product::getCategory() const
 {
     return mCategory;
 }
@@ -51,7 +47,7 @@ const string Product::getCategory() const
 
 const string Product::toString() const
 {
-    return to_string(mId) + "," + mName + "," + to_string(mPrice) + "," + mCategory; 
+    return to_string(mId) + "," + mName + "," + to_string(mPrice.get()) + "," + mCategory.get(); 
 }
 
 const Product Product::createFromString(const std::string& str)
@@ -60,9 +56,8 @@ const Product Product::createFromString(const std::string& str)
     char comma;
     unsigned int id;
     string name;
-    int price;
-    string category;
-
+    unsigned int priceInput;
+    string categoryInput;
 
     // id를 파싱
     if (!(iss >> id >> comma) || comma != ',') {
@@ -75,14 +70,22 @@ const Product Product::createFromString(const std::string& str)
     }
 
     // price를 파싱
-    if (!(iss >> price >> comma) || comma != ',') {
+    if (!(iss >> priceInput >> comma) || comma != ',') {
         throw invalid_argument("Invalid product string format (price)");
     }
 
     // category를 파싱
-    if (!std::getline(iss, category)) {
+    if (!std::getline(iss, categoryInput)) {
         throw invalid_argument("Invalid product string format (category)");
     }
 
-    return Product(id, name, price, category);
+    try {
+        // 파싱된 값을 기반으로 객체 생성
+        Price price(priceInput);
+        Category category(categoryInput);
+
+        return Product(id, name, price, category);
+    } catch (const std::invalid_argument& e) {
+        throw std::invalid_argument("Invalid product data: " + std::string(e.what()));
+    }
 }
