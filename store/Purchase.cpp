@@ -38,17 +38,17 @@ const chrono::system_clock::time_point Purchase::getDate() const
 
 string Purchase::timePointToString(const chrono::system_clock::time_point& timePoint)
 {
-    std::time_t t = chrono::system_clock::to_time_t(timePoint);
-    std::tm tm = *std::localtime(&t);
-    std::ostringstream oss;
+    time_t t = chrono::system_clock::to_time_t(timePoint);
+    tm tm = *std::localtime(&t);
+    ostringstream oss;
     oss << put_time(&tm, "%Y-%m-%d %H:%M:%S");
     return oss.str();
 }
 
 chrono::system_clock::time_point Purchase::stringToTimePoint(const string& dateStr) 
 {
-    std::tm tm = {};
-    std::istringstream iss(dateStr);
+    tm tm = {};
+    istringstream iss(dateStr);
     iss >> get_time(&tm, "%Y-%m-%d %H:%M:%S");
     if (iss.fail()) {
         throw std::invalid_argument("Invalid date format");
