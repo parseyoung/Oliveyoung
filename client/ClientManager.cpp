@@ -6,6 +6,10 @@
 
 #include "ClientManager.h"
 #include "Client.h"
+#include "Name.h"
+#include "PhoneNumber.h"
+#include "Point.h"
+
 
 using namespace std;
 
@@ -95,9 +99,9 @@ void ClientManager::displayItemsInfo() const
     for (const auto& it : mItemMap) {
         Client* client = it.second;
         cout << setw(5) << setfill('0') << right << client->getId() << " | " << left;
-        cout << setw(12) << setfill(' ') << client->getName() << endl;
-        cout << setw(12) << setfill(' ') << client->getPhoneNumber() << endl;
-        cout << setw(12) << setfill(' ') << client->getPoint() << endl;
+        cout << setw(12) << setfill(' ') << client->getName().get() << " | ";
+        cout << setw(13) << setfill(' ') << client->getPhoneNumber().getFullNumber() << " | ";
+        cout << setw(10) << setfill(' ') << client->getPoint().get() << endl;
     }
 
     cout << endl;
@@ -106,13 +110,21 @@ void ClientManager::displayItemsInfo() const
 
 void ClientManager::inputItem()
 {
-    string name;
-    string phoneNumber;
-    int point;
-    cout << "name : "; cin >> name;
-    cout << "phone number : "; cin >> phoneNumber;
-    cout << "initial point : "; cin >> point;
-    // validate field
+    string nameInput;
+    string phoneNumberInput;
+    int pointInput;
+    cout << "name : "; cin >> nameInput;
+    cout << "phone number : "; cin >> phoneNumberInput;
+    cout << "initial point : "; cin >> pointInput;
+    
+    try {
+        Name name(nameInput);
+        PhoneNumber phoneNumber(phoneNumberInput);
+        Point point(pointInput);
 
-    add(Client(generateId(), name, phoneNumber, point));
+        add(Client(generateId(), name, phoneNumber, point));
+    } catch (const invalid_argument& e) {
+        cerr << "Error: " << e.what() << endl;
+        cout << "Client 생성에 실패했습니다. 다시 시도하세요." << endl;
+    }
 }
