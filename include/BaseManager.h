@@ -140,17 +140,15 @@ void BaseManager<T>::load()
 }
 
 template <typename T>
-const unsigned int BaseManager<T>::generateId() const
-{
-    // 로직의 수정이 필요할듯
-    if (mItemMap.size() == 0) {
-        return 0;
-    } else {
-        auto elem = mItemMap.end(); 
-        int id = (--elem)->first;
-        return ++id;
+const unsigned int BaseManager<T>::generateId() const {
+    if (mItemMap.empty()) {
+        return 1;  // Start with ID 1 if no items exist
+    }
+    else {
+        return mItemMap.rbegin()->first + 1;  // Increment the highest existing ID
     }
 }
+
 
 template <typename T>
 vector<string> BaseManager<T>::parseCSV(istream& fin, char delimiter)

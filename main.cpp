@@ -2,6 +2,7 @@
 #include "store/Store.h"
 #include "client/ClientManager.h"
 #include "product/ProductManager.h"
+#include "product/CategoryManager.h"
 
 #include <iostream>
 using namespace std;
@@ -21,12 +22,14 @@ void displayMainMenu() {
 int main(void)
 {   
 
-    ClientManager clientManager = ClientManager();
-    ProductManager productManager = ProductManager();
-    Store store = Store("OliveYoung");
-    StoreManager storeManager = StoreManager(store, productManager, clientManager);
-    cout << "set up done" << endl;
-    cout<< "Welcome: " + store.getName() << endl;
+    CategoryManager categoryManager; // Assuming a CategoryManager is required
+    ProductManager productManager(categoryManager); // Initialize with a CategoryManager
+    ClientManager clientManager; // Assuming a default constructor is okay
+    Store store("OliveYoung");
+    StoreManager storeManager(store, productManager, clientManager);
+
+    cout << "Setup done" << endl;
+    cout << "Welcome: " << store.getName() << endl;
 
     
     bool running = true;
