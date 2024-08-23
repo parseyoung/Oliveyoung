@@ -4,6 +4,7 @@
 #include "../include/BaseManager.h"
 #include "../database/Constants.h"
 #include "Product.h"
+#include "../logger/Logger.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ public:
     void inputItem();
 
 private:
+    static Logger logger;
 };
 
 #endif // PRODUCT_MANAGER_H

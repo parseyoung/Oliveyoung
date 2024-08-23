@@ -4,6 +4,7 @@
 #include "product/ProductManager.h"
 
 #include <iostream>
+
 using namespace std;
 
 void displayMainMenu() {
@@ -20,7 +21,6 @@ void displayMainMenu() {
 
 int main(void)
 {   
-
     ClientManager clientManager = ClientManager();
     ProductManager productManager = ProductManager();
     Store store = Store("OliveYoung");

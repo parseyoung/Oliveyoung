@@ -1,16 +1,20 @@
-#include <assert.h>
+#include <cassert>
 #include <chrono>
 #include <ctime>
+#include <iostream>
+#include <fstream>
 
 #include "Logger.h"
 #include "../database/Constants.h"
 
+using namespace std;
+
 Logger::Logger(const string& className)
     : mClassName(className) 
 {
-    mLogFile.open(LOG, ios::app);
-    if (!mLogFile.is_open()) {
-        cerr << "Error opening log file: " << LOG << endl;
+    mLogFile.open(getLogPath(), ios_base::app);
+    if (mLogFile.is_open() == false) {
+        cerr << "Error opening log file: " <<  getLogPath() << endl;
     }
 }
 
@@ -76,5 +80,3 @@ string Logger::getTimestamp()
     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&now_time));
     return string(buffer);
 }
-
-
