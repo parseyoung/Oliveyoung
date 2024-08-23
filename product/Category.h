@@ -1,28 +1,33 @@
 #ifndef CATEGORY_H
 #define CATEGORY_H
 
+
 #include <string>
-#include <regex>
-#include <stdexcept>
+#include <map>
+#include "Product.h"
+
 
 using namespace std;
 
+
 class Category {
 public:
-    Category(const string& category) {
-     
-        // validation 
-        // 어떤걸 해야할지 모르겠어서, 비워둠
+    Category(const string& name);
+    ~Category();
 
-        mCategory = category;
-    }
+    void addProduct(Product* product);
+    void deleteProduct(int id);
+    Product* searchProduct(int id) const;
+    void displayProducts() const;
 
-    const string& get() const {
-        return mCategory;
-    }
+    string getName() const;
+    unsigned int getId() const;
+
 
 private:
-    string mCategory;
+    string mName;
+    unsigned int mId;
+    map<int, Product*> mProductsMap;
 };
 
 #endif // CATEGORY_H
