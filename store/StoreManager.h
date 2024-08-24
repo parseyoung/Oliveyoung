@@ -8,12 +8,13 @@
 #include "../product/ProductManager.h"
 #include "../client/ClientManager.h"
 #include "../database/Constants.h"
+#include "../observer/Observer.h"
 
 // 저장소
 const string STOCK_INFO = DIR_DATABASE + "stock_list.csv";
 const string PURCHASE_HISTORY = DIR_DATABASE + "purchase_history.csv";
 
-class StoreManager
+class StoreManager:public Observer
 {
 public:
     StoreManager(Store& store, ProductManager& productManager, ClientManager& clientManager);
@@ -36,6 +37,9 @@ public:
 // View 관리
     const bool displayMenu();
 
+//subject
+    void update(unsigned int id);
+
 private:
     void handleSellProduct();
     void displayStockInfo() const;
@@ -52,9 +56,11 @@ private:
 
     void recordPurchase(const unsigned int productId, const unsigned int clientId) const;
 
+
     Store& mStore;  
     ProductManager& mProductManager;  
     ClientManager& mClientManager;
 };
 
 #endif // STORE_MANAGER_H
+

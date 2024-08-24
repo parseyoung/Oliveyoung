@@ -8,13 +8,16 @@
 #include <utility>
 #include <sstream>
 #include <iostream>
+#include <list>
 
+#include "../observer/Subject.h"
+#include "../observer/Observer.h"
 #include "../database/Constants.h"
 
 using namespace std;
 
 template<typename T>
-class BaseManager 
+class BaseManager : public Subject
 {
 public:
     BaseManager(const string& resourcePath);
@@ -24,13 +27,15 @@ public:
     const bool remove(const unsigned int id);
     const T& getById(const unsigned int id) const;
     const bool contains(const unsigned int id) const;
+    void subscribe(Observer *o);
+    void unsubscribe(Observer *o);
 
     void load();
 
 protected:
     const unsigned int generateId() const;
     map<unsigned int, T*> mItemMap;
-
+    list<Observer*>observers;
 private:
     vector<string> parseCSV(istream& fin, char delimiter);
     void appendToFile(const T& item) const;
@@ -240,6 +245,18 @@ void BaseManager<T>::removeFromFile(const unsigned int id) const
         std::remove(TEMP_BUFFER.c_str());
     }
 }
-
+template <typename T>
+void BaseManager<T>::subscribe(Observer *o)
+{
+    observers.push_back(o);
+}
+template <typename T>
+void BaseManager<T>::unsubscribe(Observer *o)
+{
+    delete o;
+    observers.remove(o);
+    
+}
 
 #endif // BASE_MANAGER_H
+

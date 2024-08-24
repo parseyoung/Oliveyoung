@@ -16,7 +16,7 @@ public:
     const bool displayMenu();
     void displayItemsInfo() const;
     void inputItem();
-
+    void notify(unsigned int id);
 private:
 };
 

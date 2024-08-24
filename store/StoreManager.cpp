@@ -14,6 +14,7 @@ StoreManager::StoreManager(Store& store, ProductManager& productManager, ClientM
     , mClientManager(clientManager) 
 {
     loadStockInfo();
+    mProductManager.subscribe(this);
 }
 
 StoreManager::~StoreManager() 
@@ -451,4 +452,10 @@ void StoreManager::displayPurchaseHistory() const
     }
 
     fin.close();
+}
+
+void StoreManager::update(unsigned int id)
+{
+    removeStockInfoFromFile(id);
+    loadStockInfo();
 }
