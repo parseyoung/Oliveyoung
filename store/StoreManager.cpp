@@ -312,12 +312,30 @@ void StoreManager::setStockInfo()
 
     cout << "Enter the Product ID: ";
     cin >> productId;
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(LLONG_MAX, '\n');
+        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        return;
+    }
 
     cout << "Enter new quantity: ";
     cin >> newQuantity;
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(LLONG_MAX, '\n');
+        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        return;
+    }
 
     cout << "Set availability (1 for available, 0 for not available): ";
     cin >> availability;
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(LLONG_MAX, '\n');
+        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        return;
+    }
 
     // Get the map of product stock
     map<unsigned int, StockInfo>& stockMap = mStore.getProductStockMap();
@@ -355,10 +373,22 @@ void StoreManager::handleSellProduct()
 
     cout << "Enter Product ID to sell: ";
     cin >> productId;
-    
+        if (cin.fail()) {
+        cin.clear();
+        cin.ignore(LLONG_MAX, '\n');
+        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        return;
+    }
+
     cout << "Enter Client ID: ";
     cin >> clientId;
-
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(LLONG_MAX, '\n');
+        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        return;
+    }
+    
     if (sell(productId, clientId)) {
         cout << "Product sold successfully!" << endl;
 
