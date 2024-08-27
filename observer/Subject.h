@@ -1,6 +1,7 @@
 #ifndef __SUBJECT_H_
 #define __SUBJECT_H_
 #include "../observer/Observer.h"
+#include<list>
 class Subject
 {
 public:
