@@ -4,6 +4,7 @@
 #include "../include/BaseManager.h"
 #include "Client.h"
 #include "../database/Constants.h"
+#include "../logger/Logger.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ public:
     void inputItem();
 
 private:
+    static Logger logger;
 };
 
 #endif // CLIENT_MANAGER_H

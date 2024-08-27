@@ -19,10 +19,11 @@ namespace ClientManagerConstants {
     const string RESOURCE = DIR_DATABASE + "client_list.csv";
 }
 
+Logger ClientManager::logger("ClientManager");
+
 ClientManager::ClientManager() : BaseManager<Client>(ClientManagerConstants::RESOURCE) 
 {
 }
-
 
 void clearConsole() {
     system("clear");
@@ -117,7 +118,14 @@ void ClientManager::inputItem()
     cout << "name : "; cin >> nameInput;
     cout << "phone number : "; cin >> phoneNumberInput;
     cout << "initial point : "; cin >> pointInput;
-    
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(LLONG_MAX, '\n');
+        logger.error("Failed to add client: Name=" + nameInput + " Phone number: " + phoneNumberInput + ", Error=Invalid initial point input.");
+        cout << "Client 생성에 실패했습니다. 다시 시도하세요." << endl;
+        return;
+    }
+
     try {
         Name name(nameInput);
         PhoneNumber phoneNumber(phoneNumberInput);
