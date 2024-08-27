@@ -156,7 +156,7 @@ void StoreManager::loadStockInfo()
     ifstream fin;
     fin.open(STOCK_INFO);
     if(fin.fail() == true) {
-        cerr << "[StoreManager] Fail: open file for reading" << endl;
+        logger.error("Failed to open stock info file for reading");
         return ;
     }
 
@@ -167,10 +167,11 @@ void StoreManager::loadStockInfo()
             auto productStockPair = Store::createStockInfoFromString(line);
             stockMap[productStockPair.first] = productStockPair.second;
         } catch (const exception& e) {
-            cerr << "[StoreManager] Error parsing line: " << e.what() << endl;
+            logger.error("Error parsing line: " + string(e.what()));
         }
     }
     fin.close();
+    logger.info("Stock info loaded successfully");
 
     mStore.initialize(stockMap);
 }
@@ -209,7 +210,7 @@ void StoreManager::appendStockInfoToFile(const unsigned int productId, const Sto
     ofstream fout;
     fout.open(STOCK_INFO, ios_base::app);
     if (fout.is_open() == false) {
-        cerr << "[StoreManager] Failed to open the store data file for appending." << endl;
+        logger.error("Failed to open the store data file for appending.");
         return;
     }
 
@@ -224,14 +225,14 @@ void StoreManager::removeStockInfoFromFile(const unsigned int id) const
     ifstream fin;
     fin.open(STOCK_INFO);
     if (fin.is_open() == false) {
-        cerr << "[StoreManager] Unable to open file for reading" << endl;
+        logger.error("Unable to open stock info file for reading");
         return;
     }
 
     ofstream fout;
     fout.open(TEMP_BUFFER.c_str());  // 임시 파일을 쓰기 모드로 엽니다.
     if (fout.is_open() == false) {
-        cerr << "[StoreManager] Unable to open temporary file for writing" << endl;
+        logger.error("Unable to open temporary file for writing");
         fin.close();
         return;
     }
@@ -410,7 +411,7 @@ void StoreManager::appendPurchaseToFile(unsigned int productId, unsigned int cli
     ofstream file(PURCHASE_HISTORY, ios_base::app);
 
     if (file.is_open() == false) {
-        cerr << "[StoreManager] Failed to open purchase history file for appending." << endl;
+        logger.error("Failed to open purchase history file for appending.");
         return;
     }
 
@@ -425,7 +426,7 @@ void StoreManager::displayPurchaseHistory() const
     fin.open(PURCHASE_HISTORY);
 
     if (fin.is_open() == false) {
-        cerr << "[StoreManager] Failed to open purchase history file." << endl;
+        logger.error("Failed to open purchase history file.");
         return;
     }
 
@@ -452,7 +453,7 @@ void StoreManager::displayPurchaseHistory() const
                     << endl;
 
         } catch (const std::invalid_argument& e) {
-            std::cerr << "[StoreManager] Error parsing line: " << e.what() << std::endl;
+            logger.error("Error parsing purchase history line: " + string(e.what()));
         }
     }
 
