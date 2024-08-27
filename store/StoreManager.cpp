@@ -55,8 +55,7 @@ const bool StoreManager::sell(const unsigned int productId, const unsigned int c
 {
     auto& stockMap = mStore.getProductStockMap();
     auto it = stockMap.find(productId);
-    
-    if ((mClientManager.contains(clientId))&&it != stockMap.end()
+    if (it != stockMap.end()
         && it->second.getQuantity() > 0 && it->second.isAvailable() == true) {
         unsigned int qauntity = it->second.getQuantity();
         it->second.setQuantity(qauntity - 1);  // 재고 감소
@@ -360,8 +359,10 @@ void StoreManager::handleSellProduct()
     
     cout << "Enter Client ID: ";
     cin >> clientId;
-
-    if (sell(productId, clientId)) {
+    if(!mClientManager.contains(clientId)){
+        cout<<"Fail to sell product. Check if Client is available and in Clientlist"<<endl;
+    }
+    else if (sell(productId, clientId)) {
         cout << "Product sold successfully!" << endl;
 
         // appendPurchaseToFile(productId, clientId);
