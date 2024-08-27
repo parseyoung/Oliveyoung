@@ -1,11 +1,11 @@
 #include <iostream>
 #include <sstream>
-
+#include "Category.h"
 #include "Product.h"
 
 using namespace std;
 
-Product::Product(unsigned int id, const string name, const Price price, const Category category)
+Product::Product(unsigned int id, const string& name, const Price& price, Category* category)
     : mId(id)
     , mName(name)
     , mPrice(price)
@@ -16,6 +16,21 @@ Product::Product(unsigned int id, const string name, const Price price, const Ca
 Product::~Product()
 {
 }
+Product::Product(const Product& other)
+    : mId(other.mId), mName(other.mName), mPrice(other.mPrice), mCategory(other.mCategory)
+{
+}
+
+Product& Product::operator=(const Product& other)
+{
+    if (this != &other) {
+        mId = other.mId;
+        mName = other.mName;
+        mPrice = other.mPrice;
+        mCategory = other.mCategory;
+    }
+    return *this;
+}
 
 bool Product::operator==(const Product& other) const
 {
@@ -23,12 +38,12 @@ bool Product::operator==(const Product& other) const
 }
 
 // getter
-const unsigned int Product::getId() const
+unsigned int Product::getId() const
 {
     return mId;
 }
 
-const string Product::getName() const
+const string& Product::getName() const
 {
     return mName;
 }
@@ -40,17 +55,17 @@ const Price& Product::getPrice() const
 
 const Category& Product::getCategory() const
 {
-    return mCategory;
+    return *mCategory;
 }
 
 // setter?
 
-const string Product::toString() const
+string Product::toString() const
 {
-    return to_string(mId) + "," + mName + "," + to_string(mPrice.get()) + "," + mCategory.get(); 
+    return to_string(mId) + "," + mName + "," + to_string(mPrice.get()) + "," + mCategory->getName();
 }
 
-const Product Product::createFromString(const std::string& str)
+Product Product::createFromString(const std::string& str)
 {
     istringstream iss(str);
     char comma;
@@ -82,10 +97,11 @@ const Product Product::createFromString(const std::string& str)
     try {
         // 파싱된 값을 기반으로 객체 생성
         Price price(priceInput);
-        Category category(categoryInput);
+        Category* category = new Category(categoryInput);
 
         return Product(id, name, price, category);
-    } catch (const std::invalid_argument& e) {
+    }
+    catch (const std::invalid_argument& e) {
         throw std::invalid_argument("Invalid product data: " + std::string(e.what()));
     }
 }

@@ -2,27 +2,32 @@
 #define CATEGORY_H
 
 #include <string>
-#include <regex>
-#include <stdexcept>
-
+#include <vector>
+//#include "Product.h"
+class Product;
 using namespace std;
+
+
 
 class Category {
 public:
-    Category(const string& category) {
-     
-        // validation 
-        // 어떤걸 해야할지 모르겠어서, 비워둠
+    Category() = default;
+    Category(const string& name);
 
-        mCategory = category;
-    }
+    // 복사 생성자 및 대입 연산자
+    Category(const Category& other);
+    Category& operator=(const Category& other);
 
-    const string& get() const {
-        return mCategory;
-    }
+
+    void addProduct(Product* product);
+    const vector<Product*>& getProducts() const;
+    const string& getName() const;
+
+    
 
 private:
-    string mCategory;
+    string mName;
+    vector<Product*> mProduct;
 };
 
 #endif // CATEGORY_H
