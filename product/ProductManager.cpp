@@ -15,9 +15,11 @@ namespace ProductManagerConstants {
     const string RESOURCE = DIR_DATABASE + "product_list.csv";
 }
 
-ProductManager::ProductManager() : BaseManager<Product>(ProductManagerConstants::RESOURCE)
-{
+Logger ProductManager::logger("ProductManager");
 
+ProductManager::ProductManager() 
+    : BaseManager<Product>(ProductManagerConstants::RESOURCE)
+{
 }
 
 // View 관리
@@ -106,14 +108,15 @@ void ProductManager::inputItem()
     cout << "name : "; cin >> name;
     cout << "price : "; cin >> priceInput;
     cout << "category : "; cin >> categoryInput;
-    // validate field
 
     try {
         Price price(priceInput);
         Category category(categoryInput);
         add(Product(generateId(), name, price, category));
+        
+        logger.info("Product added: Name=" + name + ", Price=" + to_string(priceInput) + ", Category=" + categoryInput);
+
     } catch (const invalid_argument& e) {
-        cerr << "Error: " << e.what() << endl;
-        cout << "Client 생성에 실패했습니다. 다시 시도하세요." << endl;
+        logger.error("Failed to add product: Name=" + name + ", Error=" + string(e.what()));
     }
 }
