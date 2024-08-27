@@ -8,6 +8,8 @@
 
 using namespace std;
 
+Logger StoreManager::logger("StoreManager");
+
 StoreManager::StoreManager(Store& store, ProductManager& productManager, ClientManager& clientManager)
     : mStore(store)
     , mProductManager(productManager) 
@@ -52,6 +54,8 @@ const bool StoreManager::setAvailability(const Product& product, const bool avai
 
 const bool StoreManager::sell(const unsigned int productId, const unsigned int clientId) 
 {
+    logger.info("sell() called with productId: " + to_string(productId) + ", clientId: " + to_string(clientId));
+
     auto& stockMap = mStore.getProductStockMap();
     auto it = stockMap.find(productId);
     if (it != stockMap.end() 
@@ -59,14 +63,18 @@ const bool StoreManager::sell(const unsigned int productId, const unsigned int c
         unsigned int qauntity = it->second.getQuantity();
         it->second.setQuantity(qauntity - 1);  // 재고 감소
 
+        logger.info("Decreased product quantity. New quantity: " + to_string(it->second.getQuantity()));
         // CSV 파일에서 해당 제품의 재고 업데이트
         updateStockInfoInFile(productId, it->second);
 
         // 구매 내역 기록
         recordPurchase(productId, clientId);
+        logger.info("Recorded purchase for productId: " + to_string(productId) + ", clientId: " + to_string(clientId));
 
         return true;
     }
+    logger.warning("Product not found in stock map for productId: " + to_string(productId));
+
     return false;
 }
 
@@ -77,38 +85,36 @@ void StoreManager::recordPurchase(const unsigned int productId, const unsigned i
     ofstream fout;
     fout.open(PURCHASE_HISTORY, ios_base::app);
     if (fout.is_open() == false) {
-        cerr << "[StoreManager] Failed to open purchase history file for writing" << endl;
+        logger.error("Failed to open purchase history file for writing");
         return;
     }
 
     fout << purchase.toString() << endl;
 
     fout.close();
+
+    logger.info("Successfully recorded purchase for productId: " + to_string(productId) + ", clientId: " + to_string(clientId));
 }
 
 
 void StoreManager::updateStockInfoInFile(const unsigned int productId, const StockInfo& updatedStockInfo) const 
 {
-
-cout << "test1" << endl;
+    logger.info("Updating stock info in file for productId: " + to_string(productId));
+ 
     ifstream fin;
     fin.open(STOCK_INFO.c_str(), ios_base::app);
     if (fin.is_open() == false) {
-        cerr << "[StoreManager] Failed to open file for reading" << endl;
+        logger.error("Failed to open stock info file for reading");
         return;
     }
-cout << "test2" << endl;
 
     ofstream fout;
     fout.open(TEMP_BUFFER.c_str());
     if (fout.is_open() == false) {
-        cerr << "[StoreManager] Failed to open temporary file for writing" << endl;
+        logger.error("Failed to open temporary file for writing");
         fin.close();
         return;
     }
-
-cout << "test3" << endl;
-
 
     string line;
     bool found = false;
@@ -129,10 +135,10 @@ cout << "test3" << endl;
             fout << line << endl;  // 다른 제품 정보는 그대로 유지
         }
     }
-cout << "test4" << endl;
 
     // 만약 파일에서 해당 productId를 찾지 못했다면 추가
     if (found == false) {
+        logger.info("ProductId not found in stock info file. Adding new record.");
         fout << Store::toStockInfoString(productId, updatedStockInfo) << endl;
         cout << "추가 완료" << endl;
     }
