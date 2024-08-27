@@ -368,3 +368,11 @@ FodyWeavers.xsd
 .vscode/
 *.csv
 *.txt
+/main4.vcxproj.filters
+/main4.vcxproj
+/main4_category.sln
+/main4_category.vcxproj
+/main4_category.vcxproj.filters
+/Oliveyoung_seyoung4.sln
+/Oliveyoung_seyoung4.vcxproj
+/Oliveyoung_seyoung4.vcxproj.filters

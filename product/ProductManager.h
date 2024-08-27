@@ -5,6 +5,8 @@
 #include "../database/Constants.h"
 #include "Product.h"
 #include "../logger/Logger.h"
+#include "Category.h"
+#include <map>
 
 using namespace std;
 
@@ -17,9 +19,14 @@ public:
     const bool displayMenu();
     void displayItemsInfo() const;
     void inputItem();
+    void displayCategories();
+    void displayProductsByCategory(const string& categoryName) const;
+    
+    const Category* findCategoryByName(const string& categoryName) const;
 
 private:
     static Logger logger;
+    map<string, Category> mCategoryMap; 
 };
 
 #endif // PRODUCT_MANAGER_H
