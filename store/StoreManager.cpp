@@ -55,7 +55,8 @@ const bool StoreManager::sell(const unsigned int productId, const unsigned int c
 {
     auto& stockMap = mStore.getProductStockMap();
     auto it = stockMap.find(productId);
-    if (it != stockMap.end() 
+    
+    if ((mClientManager.contains(clientId))&&it != stockMap.end()
         && it->second.getQuantity() > 0 && it->second.isAvailable() == true) {
         unsigned int qauntity = it->second.getQuantity();
         it->second.setQuantity(qauntity - 1);  // 재고 감소
