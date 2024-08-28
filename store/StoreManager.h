@@ -8,7 +8,9 @@
 #include "../product/ProductManager.h"
 #include "../client/ClientManager.h"
 #include "../database/Constants.h"
+#include "../logger/Logger.h"
 #include "../observer/Observer.h"
+
 
 // 저장소
 const string STOCK_INFO = DIR_DATABASE + "stock_list.csv";
@@ -60,6 +62,8 @@ private:
     Store& mStore;  
     ProductManager& mProductManager;  
     ClientManager& mClientManager;
+
+    static Logger logger;
 };
 
 #endif // STORE_MANAGER_H
