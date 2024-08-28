@@ -1,6 +1,7 @@
 #ifndef CLIENT_MANAGER_H
 #define CLIENT_MANAGER_H
 
+
 #include "../include/BaseManager.h"
 #include "Client.h"
 #include "../database/Constants.h"
@@ -16,7 +17,7 @@ public:
     const bool displayMenu();
     void displayItemsInfo() const;
     void inputItem();
-
+    void notify(unsigned int id);
 private:
 };
 
