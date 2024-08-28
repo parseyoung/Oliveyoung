@@ -109,6 +109,12 @@ void ProductManager::inputItem()
     string categoryInput;
     cout << "name : "; cin >> name;
     cout << "price : "; cin >> priceInput;
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(LLONG_MAX, '\n');
+        logger.error("Failed to add product: Name=" + name + ", Error=Invalid price input.");
+        return;
+    }
     cout << "category : "; cin >> categoryInput;
 
     try {

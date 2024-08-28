@@ -6,6 +6,7 @@
 #include "../include/ViewManager.h"
 #include "Client.h"
 #include "../database/Constants.h"
+#include "../logger/Logger.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ public:
 
     void notify(unsigned int id);
 private:
+    static Logger logger;
 };
 
 #endif // CLIENT_MANAGER_H
