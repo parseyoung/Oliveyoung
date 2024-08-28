@@ -1,6 +1,7 @@
 #ifndef CLIENT_MANAGER_H
 #define CLIENT_MANAGER_H
 
+
 #include "../include/BaseManager.h"
 #include "../include/ViewManager.h"
 #include "Client.h"
@@ -18,6 +19,7 @@ public:
     void displayItemsInfo() const override;
     void inputItem() override;
 
+    void notify(unsigned int id);
 private:
 };
 

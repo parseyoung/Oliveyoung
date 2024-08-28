@@ -57,7 +57,6 @@ const bool ProductManager::displayMenu()
             cout << "Input Product (name)" << endl;
             cout << setw(45) << setfill('-') << "\n" << endl;
             inputItem();
-
             break;
         case DELETE_CLIENT:
             // clearConsole();
@@ -70,7 +69,10 @@ const bool ProductManager::displayMenu()
             cout << "   Choose product id : ";
 
             cin >> id;
-            remove(id);
+            if(remove(id)){
+                notify(id);
+            }
+            
 
             break;
         case QUIT_PROGRAM:
@@ -120,3 +122,12 @@ void ProductManager::inputItem()
         logger.error("Failed to add product: Name=" + name + ", Error=" + string(e.what()));
     }
 }
+
+void ProductManager::notify(unsigned int id)
+{
+    for(const auto & it:observers)
+    {
+        it->update(id);
+    }
+}
+

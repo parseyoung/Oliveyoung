@@ -19,6 +19,8 @@ public:
     void displayItemsInfo() const override;
     void inputItem() override;
 
+    void notify(unsigned int id);
+
 private:
     static Logger logger;
 };

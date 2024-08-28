@@ -129,3 +129,10 @@ void ClientManager::inputItem()
         cout << "Client 생성에 실패했습니다. 다시 시도하세요." << endl;
     }
 }
+ void ClientManager:: notify(unsigned int id)
+ {
+    for(const auto & it:observers)
+    {
+        it->update(id);
+    }
+ }
