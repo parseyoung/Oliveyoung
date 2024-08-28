@@ -4,6 +4,7 @@
 #include "product/ProductManager.h"
 
 #include <iostream>
+#include <cstdlib>  
 
 using namespace std;
 
@@ -21,6 +22,7 @@ void displayMainMenu() {
 
 int main(void)
 {   
+    system("chcp 65001");
     ClientManager clientManager = ClientManager();
     ProductManager productManager = ProductManager();
     Store store = Store("OliveYoung");

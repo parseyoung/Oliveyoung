@@ -11,19 +11,19 @@ using namespace std;
 class Product
 {
 public:
-    Product(unsigned int id, const string name, const Price price, const Category category);
+    Product(unsigned int id, const string& name, const Price& price, const Category& category);
     ~Product();
     bool operator==(const Product& other) const;
 
     // getter
     const unsigned int getId() const;
-    const string getName() const;
+    const string& getName() const;
     const Price& getPrice() const;
     const Category& getCategory() const;
 
     // setter?
 
-    const string toString() const;
+    string toString() const;
     static const Product createFromString(const std::string& str);
 
 private:

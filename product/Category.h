@@ -4,25 +4,31 @@
 #include <string>
 #include <regex>
 #include <stdexcept>
+#include <vector>
+
+class Product;
 
 using namespace std;
 
 class Category {
 public:
-    Category(const string& category) {
-     
-        // validation 
-        // 어떤걸 해야할지 모르겠어서, 비워둠
+    explicit Category(const string& name);
 
-        mCategory = category;
-    }
+    //Category(const string& category) {
 
-    const string& get() const {
-        return mCategory;
-    }
+    const std::string& getName() const;
+
+    void addProduct(Product* product);
+
+    void removeProduct(Product* product);
+
+    const std::vector<Product*>& getProducts() const;
 
 private:
     string mCategory;
+    vector<Product*> mProducts;
 };
+
+//ostream& operator<<(std::ostream& os, const Category& category);
 
 #endif // CATEGORY_H

@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <vector>
-
+#include <set>
 #include "ProductManager.h"
 #include "Product.h"
 
@@ -25,7 +25,7 @@ ProductManager::ProductManager()
 // View 관리
 const bool ProductManager::displayMenu()
 {
-    enum MenuOptions { DISPLAY_CLIENT_LIST = 1, INPUT_CLIENT, DELETE_CLIENT, QUIT_PROGRAM };
+    enum MenuOptions { DISPLAY_CLIENT_LIST = 1, INPUT_CLIENT, DELETE_CLIENT, DISPLAY_BY_CATEGORY, QUIT_PROGRAM };
 
     // clearConsole();
     cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
@@ -34,20 +34,22 @@ const bool ProductManager::displayMenu()
     cout << "  1. Display Product List                     " << endl;
     cout << "  2. input Product                            " << endl;
     cout << "  3. Delete Product                           " << endl;
-    cout << "  4. Quit this Program                       " << endl;
+    cout << "  4. Display Products by Category             " << endl;
+    cout << "  5. Quit this Program                       " << endl;
     cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
     cout << " What do you wanna do? ";
     
     int id;
     int menu;
     cin >> menu;
+    cin.ignore();
     switch(menu) {
         case DISPLAY_CLIENT_LIST: 
             // clearConsole();
 
             displayItemsInfo();
             cin.ignore();
-            getchar();
+           // getchar();
 
             break;
         case INPUT_CLIENT:
@@ -72,9 +74,21 @@ const bool ProductManager::displayMenu()
             if(remove(id)){
                 notify(id);
             }
-            
-
             break;
+        case DISPLAY_BY_CATEGORY:
+            cout << setw(45) << setfill('-') << "\n" << endl;
+            cout << "Display Products by Category" << endl;
+            cout << setw(45) << setfill('-') << "\n" << endl;
+            // 카테고리 목록을 먼저 출력
+            displayCategoryList();
+            {
+                string categoryName;
+                cout << "Enter category name: ";
+                getline(cin, categoryName); // Ensure category name is properly read
+                displayProductsByCategory(categoryName);
+            }
+            break;
+
         case QUIT_PROGRAM:
             return true;
 
@@ -95,7 +109,7 @@ void ProductManager::displayItemsInfo() const
         cout << setw(5) << setfill('0') << right << product->getId() << " | " << left;
         cout << setw(12) << setfill(' ') << product->getName() << endl;
         cout << setw(12) << setfill(' ') << product->getPrice().get() << endl;
-        cout << setw(12) << setfill(' ') << product->getCategory().get() << endl;
+        cout << setw(12) << setfill(' ') << product->getCategory().getName() << endl;
     }
 
     cout << endl;
@@ -120,11 +134,17 @@ void ProductManager::inputItem()
     try {
         Price price(priceInput);
         Category category(categoryInput);
-        add(Product(generateId(), name, price, category));
+
+        Product newProduct(generateId(), name, price, category);
+        add(newProduct);
         
         logger.info("Product added: Name=" + name + ", Price=" + to_string(priceInput) + ", Category=" + categoryInput);
 
     } catch (const invalid_argument& e) {
+        logger.error("Failed to add product: Name=" + name + ", Error=" + string(e.what()));
+    }
+    catch (const std::out_of_range& e) {
+        cout << "Error: " << e.what() << endl;
         logger.error("Failed to add product: Name=" + name + ", Error=" + string(e.what()));
     }
 }
@@ -137,3 +157,41 @@ void ProductManager::notify(unsigned int id)
     }
 }
 
+void ProductManager::displayProductsByCategory(const string& categoryName)
+{
+    cout << "Products in category: " << categoryName << endl;
+    bool found = false;
+    for (const auto& it : mItemMap) {
+        Product* product = it.second;
+        if (product->getCategory().getName() == categoryName) {
+            //cout << product->toString() << endl;
+            cout << product->getName() << endl;
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "해당 카테고리의 상품을 찾을 수 없습니다. " << endl;
+    }
+}
+
+void ProductManager::displayCategoryList() const
+{
+    cout << "카테고리 목록:" << endl;
+
+    set<string> categories; // 중복을 제거하기 위해 set 사용
+
+    // 모든 제품을 순회하면서 카테고리 수집
+    for (const auto& it : mItemMap) {
+        Product* product = it.second;
+        categories.insert(product->getCategory().getName());
+    }
+
+    // 카테고리 목록 출력
+    for (const auto& category : categories) {
+        cout << category << endl;
+    }
+
+    cout << endl;
+    cout << "Return to menu: enter any key" << endl;
+    cin.ignore(); // 사용자가 아무 키나 누를 때까지 대기
+}

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Product::Product(unsigned int id, const string name, const Price price, const Category category)
+Product::Product(unsigned int id, const string& name, const Price& price, const Category& category)
     : mId(id)
     , mName(name)
     , mPrice(price)
@@ -28,7 +28,7 @@ const unsigned int Product::getId() const
     return mId;
 }
 
-const string Product::getName() const
+const string& Product::getName() const
 {
     return mName;
 }
@@ -45,10 +45,19 @@ const Category& Product::getCategory() const
 
 // setter?
 
-const string Product::toString() const
+//const string Product::toString() const
+//{
+//    return to_string(mId) + "," + mName + "," + to_string(mPrice.get()) + "," + mCategory.get(); 
+//}
+string Product::toString() const
 {
-    return to_string(mId) + "," + mName + "," + to_string(mPrice.get()) + "," + mCategory.get(); 
+    string categoryName = mCategory.getName();
+    if (categoryName.empty()) {
+        categoryName = "No Category";
+    }
+    return std::to_string(mId) + "," + mName + "," + std::to_string(mPrice.get()) + "," + categoryName;
 }
+
 
 const Product Product::createFromString(const std::string& str)
 {

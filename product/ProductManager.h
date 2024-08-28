@@ -20,6 +20,8 @@ public:
     void inputItem() override;
 
     void notify(unsigned int id);
+    void displayProductsByCategory(const string& categoryName);
+    void displayCategoryList() const;
 
 private:
     static Logger logger;
