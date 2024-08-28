@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class Client
+class Client 
 {
 public:
     Client(unsigned int id, const Name name, const PhoneNumber phoneNumber, const Point point);
