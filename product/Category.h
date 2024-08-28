@@ -29,6 +29,5 @@ private:
     vector<Product*> mProducts;
 };
 
-//ostream& operator<<(std::ostream& os, const Category& category);
 
 #endif // CATEGORY_H

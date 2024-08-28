@@ -10,7 +10,7 @@ using namespace std;
 
 void displayMainMenu() {
     cout << "=============================================" << endl;
-    cout << "          Welcome to Store Management        " << endl;
+    cout << "    Welcome to OliveYoung Store Management   " << endl;
     cout << "=============================================" << endl;
     cout << "  1. Store Management                        " << endl;
     cout << "  2. Client Management                       " << endl;
@@ -22,7 +22,7 @@ void displayMainMenu() {
 
 int main(void)
 {   
-    system("chcp 65001");
+    //system("chcp 65001");
     ClientManager clientManager = ClientManager();
     ProductManager productManager = ProductManager();
     Store store = Store("OliveYoung");

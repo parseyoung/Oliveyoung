@@ -24,7 +24,3 @@ const vector<Product*>& Category::getProducts() const {
     return mProducts;
 }
 
-//std::ostream& operator<<(std::ostream& os, const Category& category) {
-//    os << category.getName();
-//    return os;
-//}
