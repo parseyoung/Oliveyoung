@@ -43,7 +43,10 @@ const Category& Product::getCategory() const
     return mCategory;
 }
 
-// setter?
+// setter
+void Product::setCategory(Category& newCategory) {
+    mCategory = newCategory;
+}
 
 //const string Product::toString() const
 //{
@@ -52,9 +55,9 @@ const Category& Product::getCategory() const
 string Product::toString() const
 {
     string categoryName = mCategory.getName();
-    if (categoryName.empty()) {
+    /*if (categoryName.empty()) {
         categoryName = "No Category";
-    }
+    }*/
     return std::to_string(mId) + "," + mName + "," + std::to_string(mPrice.get()) + "," + categoryName;
 }
 

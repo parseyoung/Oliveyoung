@@ -22,6 +22,7 @@ public:
     const Category& getCategory() const;
 
     // setter?
+    void setCategory(Category& newCategory);
 
     string toString() const;
     static const Product createFromString(const std::string& str);

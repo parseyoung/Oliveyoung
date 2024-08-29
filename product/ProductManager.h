@@ -23,8 +23,15 @@ public:
     void displayProductsByCategory(const string& categoryName);
     void displayCategoryList() const;
 
+    bool isCategoryExists(const string& categoryName) const;
+    void addCategory(const string& categoryName);
+    Category* getOrCreateCategory(const string& categoryName);
+
+    void CategoryDelete(const string& categoryName);
+
 private:
     static Logger logger;
+    map<string, Category*> mCategoryMap; 
 };
 
 #endif // PRODUCT_MANAGER_H
