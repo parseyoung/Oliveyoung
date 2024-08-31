@@ -6,6 +6,7 @@
 #include "StoreManager.h"
 #include "Purchase.h"
 
+
 using namespace std;
 
 Logger StoreManager::logger("StoreManager");
