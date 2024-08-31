@@ -8,6 +8,7 @@
 #include <utility>
 #include <sstream>
 #include <iostream>
+#include <climits>
 
 #include "../database/Constants.h"
 #include "../observer/Subject.h"

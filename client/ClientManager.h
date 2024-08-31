@@ -20,7 +20,7 @@ public:
     void displayItemsInfo() const override;
     void inputItem() override;
 
-    void notify(unsigned int id);
+    void notify(unsigned int id) override;
 private:
     static Logger logger;
 };
