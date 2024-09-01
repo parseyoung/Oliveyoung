@@ -36,13 +36,14 @@ const bool ClientManager::displayMenu()
     enum MenuOptions { DISPLAY_CLIENT_LIST = 1, INPUT_CLIENT, DELETE_CLIENT, QUIT_PROGRAM };
 
     //clearConsole();
+    cout << "                                              " << endl;
     cout << "=============================================" << endl;
     cout << "              Client Manager                 " << endl;
     cout << "=============================================" << endl;
     cout << "  1. Display Client List                    " << endl;
     cout << "  2. Input Client                           " << endl;
     cout << "  3. Delete Client                          " << endl;
-    cout << "  4. Quit this Program                      " << endl;
+    cout << "  4. Quit this Menu                         " << endl;
     cout << "=============================================" << endl;
     cout << " What do you want to do? ";
     
@@ -59,17 +60,21 @@ const bool ClientManager::displayMenu()
 
         case INPUT_CLIENT:
             //clearConsole();
+            cout << "                                              " << endl;
             cout << "---------------------------------------------" << endl;
             cout << "                Input Client                 " << endl;
             cout << "---------------------------------------------" << endl;
+            cout << "                                              " << endl;
             inputItem();
             break;
 
         case DELETE_CLIENT:
             //clearConsole();
+            cout << "                                              " << endl;
             cout << "---------------------------------------------" << endl;
             cout << "                Delete Client                " << endl;
             cout << "---------------------------------------------" << endl;
+            cout << "                                              " << endl;
             displayItemsInfo();
             cout << "   Choose client id : ";
             cin >> id;
@@ -80,7 +85,7 @@ const bool ClientManager::displayMenu()
             return true;
 
         default:
-            cout << DISPLAY_CLIENT_LIST << "와 " << QUIT_PROGRAM << " 사이의 값을 입력하세요." << endl;
+            cout << DISPLAY_CLIENT_LIST << "and " << QUIT_PROGRAM << " 사이의 값을 입력하세요." << endl;
             break;
     }
 
@@ -90,11 +95,13 @@ const bool ClientManager::displayMenu()
 
 
 void ClientManager::displayItemsInfo() const
+
 {
+    cout <<  endl;
     cout << "Client list" << endl;
-    cout << "=============================================" << endl;
+    cout << "---------------------------------------------" << endl;
     cout << "   ID   |   Name   |       Phone Number      " << endl;
-    cout << "=============================================" << endl;
+    cout << "---------------------------------------------" << endl;
     for (const auto& it : mItemMap) {
         Client* client = it.second;
         cout << setw(5) << setfill('0') << right << client->getId() << " | " << left;
@@ -103,8 +110,9 @@ void ClientManager::displayItemsInfo() const
         cout << setw(10) << setfill(' ') << client->getPoint().get() << endl;
     }
 
-    cout << "=============================================" << endl;
+    cout << "---------------------------------------------" << endl;
     cout << "Press Enter to return to the menu...";
+    cout <<  endl;
 }
 
 void ClientManager::inputItem()

@@ -29,6 +29,7 @@ const bool ProductManager::displayMenu()
     enum MenuOptions { DISPLAY_PRODUCT_LIST = 1, INPUT_PRODUCT, DELETE_PRODUCT, DISPLAY_BY_CATEGORY, DELETE_CATEGORY, QUIT_PROGRAM };
 
     //clearConsole();
+    cout << "                                              " << endl;
     cout << "=============================================" << endl;
     cout << "              Product Manager                " << endl;
     cout << "=============================================" << endl;
@@ -37,7 +38,7 @@ const bool ProductManager::displayMenu()
     cout << "  3. Delete Product                         " << endl;
     cout << "  4. Display Products by Category           " << endl;
     cout << "  5. Delete Category                        " << endl;
-    cout << "  6. Quit this Program                      " << endl;
+    cout << "  6. Quit this Menu                         " << endl;
     cout << "=============================================" << endl;
     cout << " What do you want to do? ";
 
@@ -55,6 +56,7 @@ const bool ProductManager::displayMenu()
 
     case INPUT_PRODUCT:
         //clearConsole();
+        cout << "                                              " << endl;
         cout << "---------------------------------------------" << endl;
         cout << "                Input Product                " << endl;
         cout << "---------------------------------------------" << endl;
@@ -63,11 +65,12 @@ const bool ProductManager::displayMenu()
 
     case DELETE_PRODUCT:
         //clearConsole();
+        cout << "                                              " << endl;
         cout << "---------------------------------------------" << endl;
         cout << "                Delete Product               " << endl;
         cout << "---------------------------------------------" << endl;
         displayItemsInfo();
-        cout << "   Choose product id : ";
+        cout << "Choose product id : ";
         cin >> id;
         if (remove(id)) {
             notify(id);
@@ -76,6 +79,7 @@ const bool ProductManager::displayMenu()
 
     case DISPLAY_BY_CATEGORY:
         //clearConsole();
+        cout << "                                              " << endl;
         cout << "---------------------------------------------" << endl;
         cout << "        Display Products by Category         " << endl;
         cout << "---------------------------------------------" << endl;
@@ -89,6 +93,7 @@ const bool ProductManager::displayMenu()
         break;
 
     case DELETE_CATEGORY:
+        cout << "                                              " << endl;
         cout << "---------------------------------------------" << endl;
         cout << "               Delete Category               " << endl;
         cout << "---------------------------------------------" << endl;
@@ -115,6 +120,7 @@ const bool ProductManager::displayMenu()
             }
             else {
                 cout << "Category '" << categoryName << "' does not exist." << endl;
+                cout << "                                              " << endl;
             }
         }
         break;
@@ -133,10 +139,11 @@ const bool ProductManager::displayMenu()
 
 void ProductManager::displayItemsInfo() const
 {
+    cout <<  endl;
     cout << "Product list" << endl;
-    cout << "=============================================" << endl;
+    cout << "---------------------------------------------" << endl;
     cout << "   ID   |    Name       |   Price  | Category   " << endl;
-    cout << "=============================================" << endl;
+    cout << "---------------------------------------------" << endl;
 
     for (const auto& it : mItemMap) {
         Product* product = it.second;
@@ -146,10 +153,9 @@ void ProductManager::displayItemsInfo() const
             << setw(10) << setfill(' ') << right << product->getCategory().getName() << endl;
     }
 
-    cout << "=============================================" << endl;
+    cout << "---------------------------------------------" << endl;
     cout << "Press Enter to return to the menu...";
-    cin.ignore();
-    cin.get();
+    cout << endl;
 }
 
 
@@ -222,13 +228,16 @@ void ProductManager::displayProductsByCategory(const string& categoryName)
             found = true;
         }
     }
+    cout << "                                              " << endl;
     if (!found) {
         cout << "No products found in this category. " << endl;
+        cout <<  endl;
     }
 }
 
 void ProductManager::displayCategoryList() const
 {
+    cout << "                                              " << endl;
     cout << "Category List:" << endl;
 
     set<string> categories;
@@ -242,7 +251,7 @@ void ProductManager::displayCategoryList() const
         cout << category << endl;
     }
 
-    cout << "=============================================" << endl;
+    cout << "---------------------------------------------" << endl;
     cout << "Press Enter to return to the menu...";
     cin.ignore();
 }
@@ -258,6 +267,7 @@ void ProductManager::addCategory(const string& categoryName)
     Category* newCategory = new Category(categoryName);
     mCategoryMap[categoryName] = newCategory;
     cout << "Category '" << categoryName << "' has been added." << endl;
+    cout << "                                              " << endl;
 }
 
 Category* ProductManager::getOrCreateCategory(const string& categoryName)
@@ -297,11 +307,14 @@ void ProductManager::CategoryDelete(const string& categoryName)
     }
 
     if (hasProducts) {
+        cout << endl;
+        cout << "---------------------------------------------" << endl;
         cout << "Category '" << categoryName << "' has associated products." << endl;
         cout << "How would you like to handle the products in this category?" << endl;
         cout << "1. Delete all products in this category." << endl;
         cout << "2. Cancel and do nothing." << endl;
         cout << "Please choose an option (1/2): ";
+        cout << "---------------------------------------------" << endl;
 
         char choice;
         cin >> choice;
@@ -312,6 +325,7 @@ void ProductManager::CategoryDelete(const string& categoryName)
             for (unsigned int id : idsToDelete) {
                 remove(id);  // BaseManager의 remove 메소드 호출
             }
+            
             cout << "All products in category '" << categoryName << "' have been deleted." << endl;
         }
         else if (choice == '2') {

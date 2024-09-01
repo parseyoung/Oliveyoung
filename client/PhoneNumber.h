@@ -14,7 +14,9 @@ public:
         smatch match;
 
         if (!regex_match(phoneNumber, match, phoneRegex)) {
-            throw invalid_argument("유효하지 않은 전화번호입니다. 010으로 시작하는 11자리 번호만 허용됩니다.");
+            //throw invalid_argument("유효하지 않은 전화번호입니다. 010으로 시작하는 11자리 번호만 허용됩니다.");
+            throw invalid_argument("Invalid phone number. Only 11-digit numbers starting with 010 are allowed.");
+
         }
 
         mPhoneNumber = phoneNumber;

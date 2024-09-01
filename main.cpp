@@ -4,20 +4,23 @@
 #include "product/ProductManager.h"
 
 #include <iostream>
-#include <cstdlib>  
 
 using namespace std;
-
 void displayMainMenu() {
-    cout << "=============================================" << endl;
-    cout << "    Welcome to OliveYoung Store Management   " << endl;
-    cout << "=============================================" << endl;
-    cout << "  1. Store Management                        " << endl;
-    cout << "  2. Client Management                       " << endl;
-    cout << "  3. Product Management                      " << endl;
-    cout << "  4. Quit                                    " << endl;
-    cout << "=============================================" << endl;
-    cout << " Please select an option: ";
+    cout << "                                               " << endl;
+    cout << "***********************************************" << endl;
+    cout << "*                                             *" << endl;
+    cout << "*  W E L C O M E   T O   O L I V E Y O U N G  *" << endl;
+    cout << "*                                             *" << endl;
+    cout << "***********************************************" << endl;
+    cout << "*                                             *" << endl;
+    cout << "*   1. Store Management                       *" << endl;
+    cout << "*   2. Client Management                      *" << endl;
+    cout << "*   3. Product Management                     *" << endl;
+    cout << "*   4. Quit                                   *" << endl;
+    cout << "*                                             *" << endl;
+    cout << "***********************************************" << endl;
+    cout << "Please select an option: ";
 }
 
 int main(void)
@@ -35,7 +38,6 @@ int main(void)
 
     while (running) {
         displayMainMenu();
-
         int choice;
         cin >> choice;
 

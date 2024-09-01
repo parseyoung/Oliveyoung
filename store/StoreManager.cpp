@@ -141,7 +141,7 @@ void StoreManager::updateStockInfoInFile(const unsigned int productId, const Sto
     if (found == false) {
         logger.info("ProductId not found in stock info file. Adding new record.");
         fout << Store::toStockInfoString(productId, updatedStockInfo) << endl;
-        cout << "추가 완료" << endl;
+        cout << "updateStockInfoInFile success" << endl;
     }
 
     fin.close();
@@ -270,17 +270,17 @@ void StoreManager::removeStockInfoFromFile(const unsigned int id) const
 const bool StoreManager::displayMenu()
 {
     enum MenuOptions { SELL_PRODUCT = 1, DISPLAY_STOCK_INFO, DISPLAY_PURCHASE_HISTORY, SET_STOCK_IFNFO, QUIT_PROGRAM };
-
-    cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
+    cout <<  endl;
+    cout << "=============================================" << endl;
     cout << "            Store Management Menu            " << endl;
-    cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
+    cout << "=============================================" << endl;
     cout << "  1. Sell Product                            " << endl;
     cout << "  2. Display Stock Info                      " << endl;
-    cout << "  3. Display Purchase history                " << endl;
+    cout << "  3. Display Purchase History                " << endl;
     cout << "  4. Set Stock and Availability              " << endl;
-    cout << "  5. Quit this Program                       " << endl;
-    cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
-    cout << " What do you wanna do? ";
+    cout << "  5. Quit this Menu                          " << endl;
+    cout << "=============================================" << endl;
+    cout << " What do you want to do?  ";
 
     int menu;
     cin >> menu;
@@ -306,6 +306,7 @@ const bool StoreManager::displayMenu()
 
         default:
             cout << "Please enter a number between " << SELL_PRODUCT << " and " << QUIT_PROGRAM << "." << endl;
+            cout << endl;
             break;
     }
 
@@ -317,22 +318,23 @@ void StoreManager::setStockInfo()
     unsigned int productId;
     unsigned int newQuantity;
     bool availability;
-
+    cout << endl;
     cout << "Enter the Product ID: ";
     cin >> productId;
     if (cin.fail()) {
         cin.clear();
         cin.ignore(LLONG_MAX, '\n');
-        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        cout << "Invalid input format. Please try again." << endl;
         return;
     }
 
+    cout <<  endl;
     cout << "Enter new quantity: ";
     cin >> newQuantity;
     if (cin.fail()) {
         cin.clear();
         cin.ignore(LLONG_MAX, '\n');
-        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        cout << "Invalid input format. Please try again." << endl;
         return;
     }
 
@@ -341,7 +343,7 @@ void StoreManager::setStockInfo()
     if (cin.fail()) {
         cin.clear();
         cin.ignore(LLONG_MAX, '\n');
-        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        cout << "Invalid input format. Please try again." << endl;
         return;
     }
 
@@ -362,8 +364,10 @@ void StoreManager::setStockInfo()
             StockInfo newStockInfo = StockInfo(newQuantity, availability);
             stockMap[productId] = newStockInfo;
             cout << "Product ID added to stock map and stock information updated successfully." << endl;
+            cout << "                                              " << endl;
         } else {
             cout << "Product ID not found in Product Manager. Please check the Product ID and try again." << endl;
+            cout << endl;
             return;
         }
     }
@@ -378,13 +382,13 @@ void StoreManager::handleSellProduct()
 {
     unsigned int productId;
     unsigned int clientId;
-
+    cout <<  endl;
     cout << "Enter Product ID to sell: ";
     cin >> productId;
         if (cin.fail()) {
         cin.clear();
         cin.ignore(LLONG_MAX, '\n');
-        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        cout << "Invalid input format. Please try again." << endl;
         return;
     }
 
@@ -393,12 +397,13 @@ void StoreManager::handleSellProduct()
     if (cin.fail()) {
         cin.clear();
         cin.ignore(LLONG_MAX, '\n');
-        cout << "잘못된 형식의 입력입니다. 다시 시도하세요." << endl;
+        cout << "Invalid input format. Please try again." << endl;
         return;
     }
   
     if(!mClientManager.contains(clientId)){
         cout<<"Fail to sell product. Check if Client is available and in Clientlist"<<endl;
+        cout << endl;
     } else if (sell(productId, clientId)) {
 
         cout << "Product sold successfully!" << endl;
@@ -409,6 +414,7 @@ void StoreManager::handleSellProduct()
         // recordPurchase(productId, clientId);
     } else {
         cout << "Failed to sell product. Check if product is available and in stock." << endl;
+        cout << endl;
     }
 }
 
@@ -420,10 +426,12 @@ void StoreManager::displayStockInfo() const
         cout << "No stock information available." << endl;
         return;
     }
-
-    cout << "Product ID | Quantity | Availability" << endl;
-    cout << "--------------------------------------" << endl;
-    
+    cout << endl;
+    cout << "---------------------------------------------" << endl;
+    cout << "            Current Stock Info               " << endl;
+    cout << "---------------------------------------------" << endl;
+    cout << "     Product ID | Quantity | Availability    " << endl;
+    cout << "---------------------------------------------" << endl;
     for (const auto& entry : stockMap) {
         cout << entry.first << " | " 
              << entry.second.getQuantity() << " | " 
@@ -465,14 +473,16 @@ void StoreManager::displayPurchaseHistory() const
     }
 
     string line;
-    cout << "Purchase History" << endl;
-    cout << "-----------------" << endl;
+    cout << endl;
+    cout << "---------------------------------------------" << endl;
+    cout << "               Purchase History              " << endl;
+    cout << "---------------------------------------------" << endl;
     cout << left
          << setw(12) << "Client ID"
          << setw(15) << "Product ID"
          << setw(20) << "Date"
          << endl;
-
+    cout << endl;
 
     while (getline(fin, line)) {
         try {
@@ -481,11 +491,9 @@ void StoreManager::displayPurchaseHistory() const
 
             // Print in formatted way
             cout << left
-                    << setw(12) << purchase.getClientId()
-                    << setw(15) << purchase.getProductId()
-                    << setw(20) << Purchase::timePointToString(purchase.getDate())
-                    << endl;
-
+                << setw(12) << purchase.getClientId()
+                << setw(15) << purchase.getProductId()
+                << setw(20) << Purchase::timePointToString(purchase.getDate());
         } catch (const std::invalid_argument& e) {
             logger.error("Error parsing purchase history line: " + string(e.what()));
         }
