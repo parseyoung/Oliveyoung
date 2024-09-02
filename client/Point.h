@@ -7,7 +7,8 @@ class Point {
 public:
     Point(int point) {
         if (point < 0) {
-            throw invalid_argument("포인트는 음수가 될 수 없습니다.");
+            //throw invalid_argument("포인트는 음수가 될 수 없습니다.");
+            throw invalid_argument("Points cannot be negative.");
         }
         mPoint = point;
     }
@@ -18,7 +19,8 @@ public:
 
     void addPoints(int points) {
         if (points < 0) {
-            throw invalid_argument("포인트를 음수로 추가할 수 없습니다.");
+            //throw invalid_argument("포인트를 음수로 추가할 수 없습니다.");
+            throw invalid_argument("Cannot add a negative amount of points.");
         }
         
         mPoint += points;

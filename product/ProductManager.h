@@ -15,14 +15,24 @@ public:
     ProductManager();
 
     // View 관리
+    void notify(unsigned int id) override;
     const bool displayMenu() override;
     void displayItemsInfo() const override;
     void inputItem() override;
+    //void notify(unsigned int id);
+    void displayProductsByCategory(const string& categoryName);
+    void displayCategoryList() const;
 
-    void notify(unsigned int id) override;
+    bool isCategoryExists(const string& categoryName) const;
+    void addCategory(const string& categoryName);
+    Category* getOrCreateCategory(const string& categoryName);
+
+    void CategoryDelete(const string& categoryName);
+
 
 private:
     static Logger logger;
+    map<string, Category*> mCategoryMap; 
 };
 
 #endif // PRODUCT_MANAGER_H

@@ -35,57 +35,57 @@ const bool ClientManager::displayMenu()
 {
     enum MenuOptions { DISPLAY_CLIENT_LIST = 1, INPUT_CLIENT, DELETE_CLIENT, QUIT_PROGRAM };
 
-    // clearConsole();
-    cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
+    //clearConsole();
+    cout << "                                              " << endl;
+    cout << "=============================================" << endl;
     cout << "              Client Manager                 " << endl;
-    cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
-    cout << "  1. Display Client List                     " << endl;
-    cout << "  2. input Client                            " << endl;
-    cout << "  3. Delete Client                           " << endl;
-    cout << "  4. Quit this Program                       " << endl;
-    cout << "+++++++++++++++++++++++++++++++++++++++++++++" << endl;
-    cout << " What do you wanna do? ";
+    cout << "=============================================" << endl;
+    cout << "  1. Display Client List                    " << endl;
+    cout << "  2. Input Client                           " << endl;
+    cout << "  3. Delete Client                          " << endl;
+    cout << "  4. Quit this Menu                         " << endl;
+    cout << "=============================================" << endl;
+    cout << " What do you want to do? ";
     
     int id;
     int menu;
     cin >> menu;
     switch(menu) {
         case DISPLAY_CLIENT_LIST: 
-            // clearConsole();
-
+            clearConsole();
             displayItemsInfo();
             cin.ignore();
             getchar();
-
             break;
+
         case INPUT_CLIENT:
-            // clearConsole();
-
-            cout << setw(45) << setfill('-') << "\n" << endl;
-            cout << "Input Client (name)" << endl;
-            cout << setw(45) << setfill('-') << "\n" << endl;
+            //clearConsole();
+            cout << "                                              " << endl;
+            cout << "---------------------------------------------" << endl;
+            cout << "                Input Client                 " << endl;
+            cout << "---------------------------------------------" << endl;
+            cout << "                                              " << endl;
             inputItem();
-
             break;
+
         case DELETE_CLIENT:
-            // clearConsole();
-
-            cout << setw(45) << setfill('-') << "\n" << endl;
-            cout << "Delete Client" << endl;;
-            cout << setw(45) << setfill('-') << "\n" << endl;
-
+            //clearConsole();
+            cout << "                                              " << endl;
+            cout << "---------------------------------------------" << endl;
+            cout << "                Delete Client                " << endl;
+            cout << "---------------------------------------------" << endl;
+            cout << "                                              " << endl;
             displayItemsInfo();
             cout << "   Choose client id : ";
-
             cin >> id;
             remove(id);
-
             break;
+
         case QUIT_PROGRAM:
             return true;
 
         default:
-            cout << DISPLAY_CLIENT_LIST << "와 " << QUIT_PROGRAM << " 사이의 값을 입력하세요." << endl;
+            cout << DISPLAY_CLIENT_LIST << "and " << QUIT_PROGRAM << " 사이의 값을 입력하세요." << endl;
             break;
     }
 
@@ -95,9 +95,13 @@ const bool ClientManager::displayMenu()
 
 
 void ClientManager::displayItemsInfo() const
+
 {
+    cout <<  endl;
     cout << "Client list" << endl;
-    cout << endl << "  ID  |     Name     " << endl;
+    cout << "---------------------------------------------" << endl;
+    cout << "   ID   |   Name   |       Phone Number      " << endl;
+    cout << "---------------------------------------------" << endl;
     for (const auto& it : mItemMap) {
         Client* client = it.second;
         cout << setw(5) << setfill('0') << right << client->getId() << " | " << left;
@@ -106,8 +110,9 @@ void ClientManager::displayItemsInfo() const
         cout << setw(10) << setfill(' ') << client->getPoint().get() << endl;
     }
 
-    cout << endl;
-    cout << "return to menu: enter any key" << endl;
+    cout << "---------------------------------------------" << endl;
+    cout << "Press Enter to return to the menu...";
+    cout <<  endl;
 }
 
 void ClientManager::inputItem()
@@ -122,7 +127,7 @@ void ClientManager::inputItem()
         cin.clear();
         cin.ignore(LLONG_MAX, '\n');
         logger.error("Failed to add client: Name=" + nameInput + " Phone number: " + phoneNumberInput + ", Error=Invalid initial point input.");
-        cout << "Client 생성에 실패했습니다. 다시 시도하세요." << endl;
+        cout << "Failed to create client. Please try again." << endl;
         return;
     }
 
@@ -134,7 +139,7 @@ void ClientManager::inputItem()
         add(Client(generateId(), name, phoneNumber, point));
     } catch (const invalid_argument& e) {
         cerr << "Error: " << e.what() << endl;
-        cout << "Client 생성에 실패했습니다. 다시 시도하세요." << endl;
+        cout << "Failed to create client. Please try again." << endl;
     }
 }
  void ClientManager:: notify(unsigned int id)
