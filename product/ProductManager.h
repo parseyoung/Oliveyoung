@@ -15,11 +15,11 @@ public:
     ProductManager();
 
     // View 관리
+    void notify(unsigned int id) override;
     const bool displayMenu() override;
     void displayItemsInfo() const override;
     void inputItem() override;
-
-    void notify(unsigned int id);
+    //void notify(unsigned int id);
     void displayProductsByCategory(const string& categoryName);
     void displayCategoryList() const;
 
@@ -28,6 +28,7 @@ public:
     Category* getOrCreateCategory(const string& categoryName);
 
     void CategoryDelete(const string& categoryName);
+
 
 private:
     static Logger logger;
