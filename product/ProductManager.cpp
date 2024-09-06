@@ -26,7 +26,7 @@ ProductManager::ProductManager()
 // View 관리
 const bool ProductManager::displayMenu()
 {
-    enum MenuOptions { DISPLAY_PRODUCT_LIST = 1, INPUT_PRODUCT, DELETE_PRODUCT, DISPLAY_BY_CATEGORY, DELETE_CATEGORY, QUIT_PROGRAM };
+    enum MenuOptions { DISPLAY_PRODUCT_LIST = 1, INPUT_PRODUCT, UPDATE_PRODUCT, DELETE_PRODUCT, DISPLAY_BY_CATEGORY, DELETE_CATEGORY, QUIT_PROGRAM };
 
     //clearConsole();
     cout << "                                              " << endl;
@@ -35,10 +35,11 @@ const bool ProductManager::displayMenu()
     cout << "=============================================" << endl;
     cout << "  1. Display Product List                   " << endl;
     cout << "  2. Input Product                          " << endl;
-    cout << "  3. Delete Product                         " << endl;
-    cout << "  4. Display Products by Category           " << endl;
-    cout << "  5. Delete Category                        " << endl;
-    cout << "  6. Quit this Menu                         " << endl;
+    cout << "  3. Update Product                          " << endl;
+    cout << "  4. Delete Product                         " << endl;
+    cout << "  5. Display Products by Category           " << endl;
+    cout << "  6. Delete Category                        " << endl;
+    cout << "  7. Quit this Menu                         " << endl;
     cout << "=============================================" << endl;
     cout << " What do you want to do? ";
 
@@ -61,6 +62,22 @@ const bool ProductManager::displayMenu()
         cout << "                Input Product                " << endl;
         cout << "---------------------------------------------" << endl;
         inputItem();
+        break;
+
+    case UPDATE_PRODUCT:
+        cout << "                                              " << endl;
+        cout << "---------------------------------------------" << endl;
+        cout << "                Update Product                " << endl;
+        cout << "---------------------------------------------" << endl;
+        displayItemsInfo();
+        cout << "Enter product ID to update : ";
+        cin >> id;
+        cin.ignore();
+        if (!contains(id)) {
+            cout << "Product not found." << endl;
+            break;
+        }
+        updateProduct(id);
         break;
 
     case DELETE_PRODUCT:
@@ -209,6 +226,64 @@ void ProductManager::inputItem()
     }
 }
 
+void ProductManager::updateProduct(unsigned int id)
+{
+    const Product& productToUpdate = getById(id);
+    
+    string newName;
+    int newPrice;
+    string priceInput;
+    string newCategoryName;
+
+    cout << "Enter new name : ";
+    getline(cin, newName);
+    if (newName.empty()) {
+        newName = productToUpdate.getName(); 
+    }
+
+    cout << "Enter new price : ";
+    getline(cin, priceInput); 
+    if (!priceInput.empty()) {
+        try {
+            newPrice = stoi(priceInput);
+        }
+        catch (const invalid_argument& e) {
+            cout << "Invalid price format. Keeping the current price." << endl;
+            newPrice = productToUpdate.getPrice().get(); // 변환 실패 시 기존 가격 유지
+        }
+        catch (const out_of_range& e) {
+            cout << "Price out of range. Keeping the current price." << endl;
+            newPrice = productToUpdate.getPrice().get(); // 범위 초과 시 기존 가격 유지
+        }
+    }
+    else {
+        newPrice = productToUpdate.getPrice().get(); 
+    }
+
+    cout << "Enter new category : ";
+    getline(cin, newCategoryName);
+    if (newCategoryName.empty()) {
+        newCategoryName = productToUpdate.getCategory().getName();  
+    }
+    Category* newCategory = getOrCreateCategory(newCategoryName);
+    if (newCategory == nullptr) {
+        cout << "Failed to update product to invalid category" << endl;
+        return;
+    }
+
+    Product updatedProduct(id, newName, Price(newPrice), *newCategory);
+
+    // BaseManager update 
+    if (update(id, updatedProduct)) {
+        logger.info("Product updated: ID=" + to_string(id) + ", Name=" + newName + ", Price=" + to_string(newPrice));
+        cout << "Product updated successfully!" << endl;
+    }
+    else {
+        cout << "Failed to update product." << endl;
+    }
+
+}
+
 void ProductManager::notify(unsigned int id)
 {
     for (const auto& it : observers)
@@ -286,7 +361,7 @@ Category* ProductManager::getOrCreateCategory(const string& categoryName)
             return mCategoryMap[categoryName];
         }
         else {
-            cout << "Add to 'No Category." << endl;
+            cout << "Add to No Category." << endl;
             return nullptr;
         }
     }

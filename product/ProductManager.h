@@ -19,6 +19,7 @@ public:
     const bool displayMenu() override;
     void displayItemsInfo() const override;
     void inputItem() override;
+    void updateProduct(unsigned int id);
     //void notify(unsigned int id);
     void displayProductsByCategory(const string& categoryName);
     void displayCategoryList() const;
