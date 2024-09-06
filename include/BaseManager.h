@@ -26,7 +26,7 @@ public:
     const bool remove(const unsigned int id);
     const T& getById(const unsigned int id) const;
     const bool contains(const unsigned int id) const;
-
+    const bool update(const unsigned int id, const T& updatedItem);
     void load();
 
     void subscribe(Observer *o);
@@ -95,6 +95,22 @@ const bool BaseManager<T>::remove(const unsigned int id)
     mItemMap.erase(it);
 
     removeFromFile(id);
+
+    return true;
+}
+
+template <typename T>
+const bool BaseManager<T>::update(const unsigned int id, const T& updatedItem)
+{
+    auto it = mItemMap.find(id);
+    if (it == mItemMap.end()) {
+        return false;
+    }
+
+    *(it->second) = updatedItem;
+
+    removeFromFile(id);
+    appendToFile(updatedItem);
 
     return true;
 }
